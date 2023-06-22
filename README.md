@@ -1,7 +1,7 @@
 # Payment Gateway API #
 
 ## Purpose
-The payment Gateway API allows a merchant to offer a way for their shoppers to pay for their product. The API also allows retrieving details of previously made payments, which will help the merchant with their reconciliation and reporting needs.
+The Payment Gateway API allows a merchant to offer a way for their shoppers to pay for their product. The API also allows retrieving details of previously made payments, which will help the merchant with their reconciliation and reporting needs.
 
 ## Code Architecture
 We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the following code-level hierarchy and flow.
@@ -13,7 +13,7 @@ We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the
 
 # Initial API contract
 ## Create Payment
-POST https://api.checkout.com/merchant/52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c/payment
+POST https://api.checkout.com/payment
 
 REQUEST BODY (required)
 ```
