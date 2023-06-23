@@ -31,6 +31,25 @@ REQUEST BODY (required)
     }
 }
 ```
+### Request properties and validation requirement
+PaymentRequest
+|           Property |        Type |                   Validation Requirement |
+|-------------------:|------------:|------------------------------------------|
+|           shopperId|         Guid| Required
+|          merchantId|         Guid| Required
+|            currency|       string| Required, length of 3 characters
+|              amount|      decimal| Required
+|  shopperCardDetails|       object| Required
+
+CardDetails
+|           Property |        Type |                   Validation Requirement |
+|-------------------:|------------:|------------------------------------------|
+|          nameOnCard|       string| Required, length between 5 and 70
+|          cardNumber|       string| Required, numeric with length of 16 
+|     expirationMonth|          int| Required, range between 1 and 12
+|      expirationYear|          int| Required, numeric with length of 4, starting from current year 
+|        securityCode|          int| Required, range between 100 and 999
+
 ## Responses
 200 OK - RESPONSE BODY
 ```
