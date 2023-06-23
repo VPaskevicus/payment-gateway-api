@@ -1,4 +1,5 @@
-﻿using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
+﻿using Checkout.Payment.Gateway.Api.Mappers;
+using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.Mappers
 {
@@ -28,11 +29,10 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Mappers
             payment.Amount.Should().Be(paymentRequest.Amount);
             payment.ShopperCardDetails.Should().NotBeNull();
             payment.ShopperCardDetails.NameOnCard.Should().Be(paymentRequest.ShopperCardDetails.NameOnCard);
-            payment.ShopperCardDetails.CardNumber.Should().Be(paymentRequest.ShopperCardDetails.NameOnCard);
+            payment.ShopperCardDetails.CardNumber.Should().Be(paymentRequest.ShopperCardDetails.CardNumber);
             payment.ShopperCardDetails.ExpirationMonth.Should().Be(paymentRequest.ShopperCardDetails.ExpirationMonth);
             payment.ShopperCardDetails.ExpirationYear.Should().Be(paymentRequest.ShopperCardDetails.ExpirationYear);
             payment.ShopperCardDetails.SecurityCode.Should().Be(paymentRequest.ShopperCardDetails.SecurityCode);
-
         }
     }
 }
