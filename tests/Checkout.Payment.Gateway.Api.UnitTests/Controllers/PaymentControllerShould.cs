@@ -71,7 +71,33 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
 
             var response = await _paymentController.CreatePayment(paymentRequest);
 
-            ((StatusCodeResult)response).StatusCode.Should().Be(400);
+            ((StatusCodeResult)response).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task Return500InternalServerErrorIfPaymentServiceThrowsException()
+        {
+            var paymentRequest = new PaymentRequest()
+            {
+                ShopperId = Guid.NewGuid(),
+                MerchantId = Guid.NewGuid(),
+                Currency = "gbp",
+                Amount = 156.60m,
+                ShopperCardDetails = new CardDetails()
+                {
+                    NameOnCard = "Vladimirs Paskevicus",
+                    CardNumber = "1243123412341234",
+                    ExpirationMonth = 3,
+                    ExpirationYear = 2027,
+                    SecurityCode = 555
+                }
+            };
+
+            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).Throws(new Exception("something went wrong!"));
+
+            var response = await _paymentController.CreatePayment(paymentRequest);
+
+            ((StatusCodeResult)response).StatusCode.Should().Be(500);
         }
     }
 }

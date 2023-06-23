@@ -19,31 +19,37 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreatePayment(PaymentRequest paymentRequest)
         {
-            var paymentDetails = new Models.Payment()
+            try
             {
-                ShopperId = paymentRequest.ShopperId,
-                MerchantId = paymentRequest.MerchantId,
-                Amount = paymentRequest.Amount,
-                Currency = paymentRequest.Currency,
-                ShopperCardDetails = new CardDetails()
+                var paymentDetails = new Models.Payment()
                 {
-                    CardNumber = paymentRequest.ShopperCardDetails.CardNumber,
-                    NameOnCard = paymentRequest.ShopperCardDetails.NameOnCard,
-                    SecurityCode = paymentRequest.ShopperCardDetails.SecurityCode,
-                    ExpirationMonth = paymentRequest.ShopperCardDetails.ExpirationMonth,
-                    ExpirationYear = paymentRequest.ShopperCardDetails.ExpirationYear
+                    ShopperId = paymentRequest.ShopperId,
+                    MerchantId = paymentRequest.MerchantId,
+                    Amount = paymentRequest.Amount,
+                    Currency = paymentRequest.Currency,
+                    ShopperCardDetails = new CardDetails()
+                    {
+                        CardNumber = paymentRequest.ShopperCardDetails.CardNumber,
+                        NameOnCard = paymentRequest.ShopperCardDetails.NameOnCard,
+                        SecurityCode = paymentRequest.ShopperCardDetails.SecurityCode,
+                        ExpirationMonth = paymentRequest.ShopperCardDetails.ExpirationMonth,
+                        ExpirationYear = paymentRequest.ShopperCardDetails.ExpirationYear
 
+                    }
+                };
+
+                var result = await _paymentService.ProcessPaymentAsync(paymentDetails);
+
+                if (result)
+                {
+                    return Ok();
                 }
-            };
-
-            var result = await _paymentService.ProcessPaymentAsync(paymentDetails);
-
-            if (result)
-            {
-                return Ok();
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
-
-            return BadRequest();
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }
