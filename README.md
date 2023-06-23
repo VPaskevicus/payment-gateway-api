@@ -22,7 +22,7 @@ REQUEST BODY (required)
     "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
     "currency": "gbp",
     "amount": 156.60,
-    "cardDetils": {
+    "cardDetails": {
         "nameOnCard": "Vladimirs Paskevicus",
         "cardNumber": "1243123412341234",
         "expirationMonth": 3,
@@ -78,7 +78,7 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
     "currency": "gbp",
     "amount": 156.60,
     "statusCode": "pennding",
-    "cardDetils": {
+    "cardDetails": {
         "nameOnCard": "Vladimirs Paskevicus",
         "cardNumber": "**** **** **** 1234",
         "expirationMonth": 3,
