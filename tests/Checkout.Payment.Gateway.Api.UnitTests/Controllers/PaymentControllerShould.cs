@@ -1,5 +1,6 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Controllers;
+using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Services;
 using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +14,16 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         private readonly PaymentController _paymentController;
 
         private readonly PaymentRequest _basicPaymentRequest;
-
+        private readonly Mock<IPaymentMapper> _paymentMapperMock;
         private readonly Mock<IPaymentService> _paymentServiceMock;
 
         public PaymentControllerShould(PaymentRequestFixture paymentRequestFixtures) 
         {
+            _paymentMapperMock = new Mock<IPaymentMapper>();
+
             _paymentServiceMock = new Mock<IPaymentService>();
 
-            _paymentController = new PaymentController(_paymentServiceMock.Object);
+            _paymentController = new PaymentController(_paymentMapperMock.Object, _paymentServiceMock.Object);
 
             _basicPaymentRequest = paymentRequestFixtures.BasicPaymentRequest;
         }

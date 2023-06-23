@@ -1,5 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
-using Checkout.Payment.Gateway.Api.Models;
+using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +9,12 @@ namespace Checkout.Payment.Gateway.Api.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
+        private readonly IPaymentMapper _paymentMapper;
         private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentMapper paymentMapper, IPaymentService paymentService)
         {
+            _paymentMapper = paymentMapper;
             _paymentService = paymentService;
         }
 
@@ -21,24 +23,9 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         {
             try
             {
-                var paymentDetails = new Models.Payment()
-                {
-                    ShopperId = paymentRequest.ShopperId,
-                    MerchantId = paymentRequest.MerchantId,
-                    Amount = paymentRequest.Amount,
-                    Currency = paymentRequest.Currency,
-                    ShopperCardDetails = new CardDetails()
-                    {
-                        CardNumber = paymentRequest.ShopperCardDetails.CardNumber,
-                        NameOnCard = paymentRequest.ShopperCardDetails.NameOnCard,
-                        SecurityCode = paymentRequest.ShopperCardDetails.SecurityCode,
-                        ExpirationMonth = paymentRequest.ShopperCardDetails.ExpirationMonth,
-                        ExpirationYear = paymentRequest.ShopperCardDetails.ExpirationYear
+                var payment = _paymentMapper.MapPaymentRequestToDomainModel(paymentRequest);
 
-                    }
-                };
-
-                var result = await _paymentService.ProcessPaymentAsync(paymentDetails);
+                var result = await _paymentService.ProcessPaymentAsync(payment);
 
                 if (result)
                 {
@@ -46,7 +33,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
                 }
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }

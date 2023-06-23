@@ -4,7 +4,7 @@ namespace Checkout.Payment.Gateway.Api.Services
 {
     public interface IPaymentService
     {
-        Task<bool> ProcessPaymentAsync(Models.Payment paymentDetails);
+        Task<bool> ProcessPaymentAsync(Models.Payment payment);
         Models.Payment GetPayment(Guid paymentId);
 
     }
