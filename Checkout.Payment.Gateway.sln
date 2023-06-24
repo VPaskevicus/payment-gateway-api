@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Payment.Gateway.Ap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3DBDA262-8ABC-4DD4-A44D-CAAEF7F00C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkout.Payment.Gateway.Api.UnitTests", "tests\Checkout.Payment.Gateway.Api.UnitTests\Checkout.Payment.Gateway.Api.UnitTests.csproj", "{2EC66A13-E35F-4F67-82A7-805F16697386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Payment.Gateway.Api.UnitTests", "tests\Checkout.Payment.Gateway.Api.UnitTests\Checkout.Payment.Gateway.Api.UnitTests.csproj", "{2EC66A13-E35F-4F67-82A7-805F16697386}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

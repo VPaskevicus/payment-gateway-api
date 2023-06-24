@@ -19,7 +19,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePayment(PaymentRequest paymentRequest)
+        public async Task<ActionResult> CreatePayment([FromBody]PaymentRequest paymentRequest)
         {
             try
             {
