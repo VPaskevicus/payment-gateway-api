@@ -1,4 +1,5 @@
 using Checkout.Payment.Gateway.Api.Mappers;
+using Checkout.Payment.Gateway.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IPaymentMapper, PaymentMapper>();
+builder.Services.AddSingleton<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 

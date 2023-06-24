@@ -18,6 +18,7 @@ POST https://api.checkout.com/payment
 REQUEST BODY (required)
 ```
 {
+    "paymentId": "44c23956-9f44-4776-b445-0e7fc56a5da6",
     "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
     "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
     "currency": "gbp",
@@ -35,6 +36,7 @@ REQUEST BODY (required)
 PaymentRequest
 |           Property |        Type |                   Validation Requirement |
 |-------------------:|------------:|------------------------------------------|
+|           paymentId|         Guid| Required
 |           shopperId|         Guid| Required
 |          merchantId|         Guid| Required
 |            currency|       string| Required, length of 3 characters
