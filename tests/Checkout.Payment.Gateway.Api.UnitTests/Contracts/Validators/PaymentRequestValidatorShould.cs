@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Checkout.Payment.Gateway.Api.Contracts.Requests;
+﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.UnitTests.Builders;
 using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
 
@@ -18,7 +17,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
         [Fact]
         public void ReturnValidWhenModelIsValid()
         {
-            var validationResult = ValidateModel(_basicPaymentRequest);
+            var validationResult = ModelValidator.Validate(_basicPaymentRequest);
 
             validationResult.Should().BeEmpty();
         }
@@ -30,7 +29,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
                 .WithShopperId(null)
                 .Create();
 
-            var validationResult = ValidateModel(paymentRequest);
+            var validationResult = ModelValidator.Validate(paymentRequest);
 
             validationResult.Should().NotBeEmpty();
 
@@ -44,7 +43,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
                 .WithMerchantId(null)
                 .Create();
 
-            var validationResult = ValidateModel(paymentRequest);
+            var validationResult = ModelValidator.Validate(paymentRequest);
 
             validationResult.Should().NotBeEmpty();
 
@@ -63,7 +62,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
                 .WithCurrency(invalidCurrency)
                 .Create();
 
-            var validationResult = ValidateModel(paymentRequest);
+            var validationResult = ModelValidator.Validate(paymentRequest);
 
             validationResult.Should().NotBeEmpty();
 
@@ -78,7 +77,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
                 .WithAmount(null)
                 .Create();
 
-            var validationResult = ValidateModel(paymentRequest);
+            var validationResult = ModelValidator.Validate(paymentRequest);
 
             validationResult.Should().NotBeEmpty();
 
@@ -92,19 +91,11 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
                 .WithCardDetails(null!)
                 .Create();
 
-            var validationResult = ValidateModel(paymentRequest);
+            var validationResult = ModelValidator.Validate(paymentRequest);
 
             validationResult.Should().NotBeEmpty();
 
             validationResult.ElementAt(0).ErrorMessage.Should().Contain("field is required");
-        }
-
-        private static IList<ValidationResult> ValidateModel(object model)
-        {
-            var validationResults = new List<ValidationResult>();
-            var ctx = new ValidationContext(model, null, null);
-            Validator.TryValidateObject(model, ctx, validationResults, true);
-            return validationResults;
         }
     }
 }

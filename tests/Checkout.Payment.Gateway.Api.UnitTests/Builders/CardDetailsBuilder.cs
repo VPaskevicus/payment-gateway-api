@@ -4,19 +4,19 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
 {
     public  class CardDetailsBuilder
     {
-        private string _nameOnCard = "Vladimirs Paskevicus";
-        private string _cardNumber = "1243123412341234";
+        private string? _nameOnCard = "Vladimirs Paskevicus";
+        private string? _cardNumber = "1243123412341234";
         private int _expirationMonth = 3;
         private int _expirationYear = 2027;
         private int _securityCode = 555;
 
-        public CardDetailsBuilder WithNameOnCard(string nameOnCard)
+        public CardDetailsBuilder WithNameOnCard(string? nameOnCard)
         {
             _nameOnCard = nameOnCard;
             return this;
         }
 
-        public CardDetailsBuilder WithCardNumber(string cardNumber)
+        public CardDetailsBuilder WithCardNumber(string? cardNumber)
         {
             _cardNumber = cardNumber;
             return this;
