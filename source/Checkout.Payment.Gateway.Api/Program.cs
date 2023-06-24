@@ -1,4 +1,6 @@
 using Checkout.Payment.Gateway.Api.Mappers;
+using Checkout.Payment.Gateway.Api.Repositories;
+using Checkout.Payment.Gateway.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IPaymentMapper, PaymentMapper>();
+builder.Services.AddSingleton<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<IPaymentRepository, InMemoryDataStore>();
 
 var app = builder.Build();
 

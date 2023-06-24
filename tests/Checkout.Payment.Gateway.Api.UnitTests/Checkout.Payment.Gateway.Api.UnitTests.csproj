@@ -28,8 +28,4 @@
     <ProjectReference Include="..\..\source\Checkout.Payment.Gateway.Api\Checkout.Payment.Gateway.Api.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validators\" />
-  </ItemGroup>
-
 </Project>

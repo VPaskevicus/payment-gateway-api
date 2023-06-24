@@ -23,6 +23,20 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
         }
 
         [Fact]
+        public void ReturnInvalidModelWhenPaymentIdIsInvalid()
+        {
+            var paymentRequest = new PaymentRequestBuilder()
+                .WithPaymentId(null)
+                .Create();
+
+            var validationResult = ModelValidator.Validate(paymentRequest);
+
+            validationResult.Should().NotBeEmpty();
+
+            validationResult.ElementAt(0).ErrorMessage.Should().Be($"The {nameof(PaymentRequest.PaymentId)} field is required.");
+        }
+
+        [Fact]
         public void ReturnInvalidModelWhenShopperIdIsInvalid()
         {
             var paymentRequest = new PaymentRequestBuilder()

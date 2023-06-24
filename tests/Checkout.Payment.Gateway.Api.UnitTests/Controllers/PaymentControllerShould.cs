@@ -29,7 +29,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task Return200OKWhenPaymentCreatedSucessfully()
+        public async Task Return200OkWhenPaymentProcessedSuccessfully()
         {
             _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(true);
 
@@ -39,9 +39,10 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task Return500InternalServerErrorIfPaymentServiceReturnsUnsucessful()
+        public async Task Return500InternalServerErrorIfPaymentServiceReturnsUnsuccessful()
         {
-            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(false);
+            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>()))
+                .ReturnsAsync(false);
 
             var response = await _paymentController.CreatePayment(_basicPaymentRequest);
 

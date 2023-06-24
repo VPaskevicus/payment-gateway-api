@@ -2,7 +2,7 @@
 {
     public class Payment
     {
-        public Guid PaymentId => Guid.NewGuid();
+        public Guid PaymentId { get; set; }
         public Guid? ShopperId { get; set; }
         public Guid? MerchantId { get; set; }
         public string? Currency { get; set; }
