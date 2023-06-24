@@ -6,10 +6,10 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
 {
     public class PaymentRequestBuilder
     {
-        private Guid _shopperId = new("83d29ff5-0735-4428-9a02-67d83f4599c8");
-        private Guid _merchantId = new("b92a095e-a730-49c5-a2a9-1f1e5377355f");
-        private string _currency = "gbp";
-        private decimal _amount = 156.60m;
+        private Guid? _shopperId = new("83d29ff5-0735-4428-9a02-67d83f4599c8");
+        private Guid? _merchantId = new("b92a095e-a730-49c5-a2a9-1f1e5377355f");
+        private string? _currency = "gbp";
+        private decimal? _amount = 156.60m;
         private CardDetails _cardDetails  = DefaultCardDetails();
 
         private static CardDetails DefaultCardDetails()
@@ -17,25 +17,25 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
             return new CardDetailsBuilder().Create();
         }
 
-        public PaymentRequestBuilder WithShopperId(Guid shopperId)
+        public PaymentRequestBuilder WithShopperId(Guid? shopperId)
         {
             _shopperId = shopperId;
             return this;
         }
 
-        public PaymentRequestBuilder WithMerchantId(Guid merchantId)
+        public PaymentRequestBuilder WithMerchantId(Guid? merchantId)
         {
             _merchantId = merchantId;
             return this;
         }
 
-        public PaymentRequestBuilder WithCurrency(string currency)
+        public PaymentRequestBuilder WithCurrency(string? currency)
         {
             _currency = currency;
             return this;
         }
 
-        public PaymentRequestBuilder WithAmount(decimal amount)
+        public PaymentRequestBuilder WithAmount(decimal? amount)
         {
             _amount = amount;
             return this;
