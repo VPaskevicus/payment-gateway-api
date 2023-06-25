@@ -1,4 +1,5 @@
-﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
+﻿using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,16 @@ namespace Checkout.Payment.Gateway.Api.Controllers
     {
         private readonly IPaymentMapper _paymentMapper;
         private readonly IPaymentService _paymentService;
+        private readonly IPaymentResponseBuilder _paymentResponseBuilder;
 
-        public PaymentController(IPaymentMapper paymentMapper, IPaymentService paymentService)
+        public PaymentController(
+            IPaymentMapper paymentMapper, 
+            IPaymentService paymentService, 
+            IPaymentResponseBuilder paymentResponseBuilder)
         {
             _paymentMapper = paymentMapper;
             _paymentService = paymentService;
+            _paymentResponseBuilder = paymentResponseBuilder;
         }
 
         [HttpPost]
@@ -27,7 +33,9 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 var paymentProcessResult = await _paymentService.ProcessPaymentAsync(payment);
 
-                return Ok();
+                var response = _paymentResponseBuilder.BuildCreatePaymentResponse(paymentProcessResult);
+
+                return Ok(response);
             }
             catch (Exception)
             {

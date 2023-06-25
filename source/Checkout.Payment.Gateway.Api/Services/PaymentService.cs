@@ -31,7 +31,6 @@ namespace Checkout.Payment.Gateway.Api.Services
             await _paymentRepository.AddPaymentAsync(payment);
 
             return new PaymentProcessResult(response, payment);
-
         }
     }
 }

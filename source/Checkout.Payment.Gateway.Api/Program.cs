@@ -1,3 +1,6 @@
+using Checkout.Payment.Gateway.Api;
+using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Repositories;
 using Checkout.Payment.Gateway.Api.Services;
@@ -13,7 +16,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IPaymentMapper, PaymentMapper>();
 builder.Services.AddSingleton<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<IPaymentResponseBuilder, PaymentResponseBuilder>();
+
 builder.Services.AddSingleton<IPaymentRepository, InMemoryDataStore>();
+builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
+
+
 
 var app = builder.Build();
 

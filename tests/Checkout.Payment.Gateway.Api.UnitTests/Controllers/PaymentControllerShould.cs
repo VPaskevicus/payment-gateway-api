@@ -1,4 +1,5 @@
-﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
+﻿using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Controllers;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Models;
@@ -18,14 +19,15 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
 
         private readonly Mock<IPaymentMapper> _paymentMapperMock;
         private readonly Mock<IPaymentService> _paymentServiceMock;
+        private readonly Mock<IPaymentResponseBuilder> _paymentResponseBuilder;
 
         public PaymentControllerShould(PaymentRequestFixture paymentRequestFixtures) 
         {
             _paymentMapperMock = new Mock<IPaymentMapper>();
-
             _paymentServiceMock = new Mock<IPaymentService>();
+            _paymentResponseBuilder = new Mock<IPaymentResponseBuilder>();
 
-            _paymentController = new PaymentController(_paymentMapperMock.Object, _paymentServiceMock.Object);
+            _paymentController = new PaymentController(_paymentMapperMock.Object, _paymentServiceMock.Object, _paymentResponseBuilder.Object);
 
             _basicPaymentRequest = paymentRequestFixtures.BasicPaymentRequest;
         }
@@ -37,7 +39,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
 
             var response = await _paymentController.CreatePayment(_basicPaymentRequest);
 
-            ((StatusCodeResult)response).StatusCode.Should().Be(200);
+            ((OkObjectResult)response).StatusCode.Should().Be(200);
         }
 
         [Fact]
