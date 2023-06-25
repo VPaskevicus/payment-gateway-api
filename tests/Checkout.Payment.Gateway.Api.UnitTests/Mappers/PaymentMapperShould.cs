@@ -1,6 +1,6 @@
 ﻿using Checkout.Payment.Gateway.Api.Mappers;
-using Checkout.Payment.Gateway.Api.UnitTests.Builders;
-using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
+using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders;
+using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.Mappers
 {

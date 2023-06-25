@@ -1,6 +1,6 @@
 ﻿using Checkout.Payment.Gateway.Api.Models;
 
-namespace Checkout.Payment.Gateway.Api.UnitTests.Fixtures
+namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
     public class PaymentFixture
     {

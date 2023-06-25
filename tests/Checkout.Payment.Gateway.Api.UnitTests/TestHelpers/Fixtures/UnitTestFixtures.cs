@@ -1,4 +1,4 @@
-﻿namespace Checkout.Payment.Gateway.Api.UnitTests.Fixtures
+﻿namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
     [CollectionDefinition("UnitTestFixtures")]
     public class UnitTestFixtures :

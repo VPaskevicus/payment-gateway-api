@@ -2,7 +2,7 @@
 using Checkout.Payment.Gateway.Api.Models;
 using Checkout.Payment.Gateway.Api.Repositories;
 using Checkout.Payment.Gateway.Api.Services;
-using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
+using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 using Moq;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.Services

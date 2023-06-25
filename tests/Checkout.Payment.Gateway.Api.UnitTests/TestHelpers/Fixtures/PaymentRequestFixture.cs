@@ -1,7 +1,7 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
-using Checkout.Payment.Gateway.Api.UnitTests.Builders;
+using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders;
 
-namespace Checkout.Payment.Gateway.Api.UnitTests.Fixtures
+namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
     public  class PaymentRequestFixture
     {

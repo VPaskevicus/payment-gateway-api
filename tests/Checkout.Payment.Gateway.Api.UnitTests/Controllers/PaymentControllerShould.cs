@@ -3,7 +3,7 @@ using Checkout.Payment.Gateway.Api.Controllers;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Models;
 using Checkout.Payment.Gateway.Api.Services;
-using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
+using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 

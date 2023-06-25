@@ -1,8 +1,7 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
-
 using CardDetails = Checkout.Payment.Gateway.Api.Contracts.CardDetails;
 
-namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
+namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders
 {
     public class PaymentRequestBuilder
     {
