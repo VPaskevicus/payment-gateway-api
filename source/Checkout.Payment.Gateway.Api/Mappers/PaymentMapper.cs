@@ -14,7 +14,6 @@ namespace Checkout.Payment.Gateway.Api.Mappers
         {
             return new Models.Payment
             {
-                PaymentId = paymentRequest.PaymentId ?? Guid.Empty,
                 ShopperId = paymentRequest.ShopperId,
                 MerchantId = paymentRequest.MerchantId,
                 Currency = paymentRequest.Currency,

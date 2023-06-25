@@ -8,6 +8,5 @@
         public string? Currency { get; set; }
         public decimal? Amount { get; set; }
         public CardDetails? ShopperCardDetails { get; set; }
-
     }
 }

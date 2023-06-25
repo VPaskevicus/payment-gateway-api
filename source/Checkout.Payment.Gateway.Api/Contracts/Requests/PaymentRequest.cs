@@ -5,9 +5,6 @@ namespace Checkout.Payment.Gateway.Api.Contracts.Requests
     public class PaymentRequest
     {
         [Required]
-        public Guid? PaymentId { get; set; }
-
-        [Required]
         public Guid? ShopperId { get; set; }
 
         [Required]

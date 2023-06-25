@@ -5,20 +5,22 @@ The Payment Gateway API allows a merchant to offer a way for their shoppers to p
 
 ## Code Architecture
 We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the following code-level hierarchy and flow.
-- **Controller**
-   - **Validator**: Validates request parameters (mandatory fields)
-     - **PaymentService**: Performs payment logic for storing, quering and forwarging payment request to acquiring bank
-        - **PaymentRepository**: Performs data store operations for payment requests 
-     - **ResponseBuilder**: Builds response for a consumer 
+- **Validator**: Validates request parameters (mandatory fields)
+    - **Controller**: Performs request execution
+        - **PaymentService**: Performs payment logic for storing, quering and forwarging payment request to acquiring bank
+            - **AcquiringBank**: Performs the client call to acquiring bank and builds retrieved response to domain model 
+            - **PaymentRepository**: Performs data store operations for payment requests
+        - **ResponseBuilder**: Builds response for a consumer 
 
-# Initial API contract
-## Create Payment
+<img src="docs/diagrams/requests-pipeline.png">
+
+
+# Create Payment
 POST https://api.checkout.com/payment
 
 REQUEST BODY (required)
 ```
 {
-    "paymentId": "44c23956-9f44-4776-b445-0e7fc56a5da6",
     "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
     "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
     "currency": "gbp",
@@ -36,7 +38,6 @@ REQUEST BODY (required)
 PaymentRequest
 |           Property |        Type |                   Validation Requirement |
 |-------------------:|------------:|------------------------------------------|
-|           paymentId|         Guid| Required
 |           shopperId|         Guid| Required
 |          merchantId|         Guid| Required
 |            currency|       string| Required, length of 3 characters
@@ -52,15 +53,26 @@ CardDetails
 |      expirationYear|          int| Required, numeric with length of 4, starting from current year 
 |        securityCode|          int| Required, range between 100 and 999
 
-## Responses
-200 OK - RESPONSE BODY
+# Responses
+## 200 OK - RESPONSE BODY
 ```
 {
-    "title": "payment created",
-    "status": 200 
+    "title": "Payment processed",
+    "status": 200,
+    "payment": {
+        Id: "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18",
+        statusCode: 001
+    }
 }
 ```
-400 Bad Request - RESPONSE BODY
+### Payment Transaction Response Codes
+|       ResponseCode |    Response Message | Response Type                            |
+|-------------------:|--------------------:|------------------------------------------|
+|                 001|             Complete| The payment transaction is complete
+|                 002|             Approved| The transaction to be processed
+|                 003|             Declined| The payment is decliened 
+
+## 400 Bad Request - RESPONSE BODY
 ```
 {
 	"title": "One or more validation errors occured."
@@ -78,7 +90,7 @@ CardDetails
     ]
 }
 ```
-500 Internal Server Error - RESPONSE BODY
+## 500 Internal Server Error - RESPONSE BODY
 ```
 {
 	"title": "Service unavailable"
@@ -86,19 +98,21 @@ CardDetails
 }
 ```
 
-## Get Payment ##
+# Get Payment #
 GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
 
-200 OK - RESPONSE BODY
+## 200 OK - RESPONSE BODY
 ```
 {
-    "paymentId": "4ac61dd6-4a9f-4f7d-8385-0263ad2d0123",
+    "payment": {
+        Id: "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18"
+        statusCode: 001
+    },
     "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
     "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
     "dateCreated": "2023-05-11T10:36:26.988Z",
     "currency": "gbp",
     "amount": 156.60,
-    "statusCode": "pennding",
     "cardDetails": {
         "nameOnCard": "Vladimirs Paskevicus",
         "cardNumber": "**** **** **** 1234",
@@ -108,14 +122,14 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
     }
 }
 ```
-404 Not Found - RESPONSE BODY
+## 404 Not Found - RESPONSE BODY
 ```
 {
 	"title": "Not Found"
 	"status": 404
 }
 ```
-500 Internal Server Error - RESPONSE BODY
+## 500 Internal Server Error - RESPONSE BODY
 ```
 {
 	"title": "Service unavailable"

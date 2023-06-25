@@ -58,7 +58,6 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
         {
             return new PaymentRequest
             {
-                PaymentId = _paymentId,
                 ShopperId = _shopperId,
                 MerchantId = _merchantId,
                 Currency = _currency,

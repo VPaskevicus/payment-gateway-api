@@ -25,7 +25,6 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Mappers
 
             var payment = _paymentMapper.MapPaymentRequestToDomainModel(paymentRequest);
 
-            payment.PaymentId.ToString().Should().Be(paymentRequest.PaymentId.ToString());
             payment.ShopperId.Should().Be(paymentRequest.ShopperId);
             payment.MerchantId.Should().Be(paymentRequest.MerchantId);
             payment.Currency.Should().Be(paymentRequest.Currency);
