@@ -3,8 +3,8 @@ using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
-    public  class PaymentRequestFixture
+    public  class CreatePaymentRequestFixture
     {
-        public PaymentRequest BasicPaymentRequest => new PaymentRequestBuilder().Create();
+        public CreatePaymentRequest BasicCreatePaymentRequest => new CreatePaymentRequestBuilder().Create();
     }
 }

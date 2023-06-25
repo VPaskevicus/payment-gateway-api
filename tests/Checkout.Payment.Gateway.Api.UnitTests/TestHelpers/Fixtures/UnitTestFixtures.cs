@@ -2,8 +2,9 @@
 {
     [CollectionDefinition("UnitTestFixtures")]
     public class UnitTestFixtures :
-        ICollectionFixture<PaymentRequestFixture>, 
-        ICollectionFixture<PaymentFixture>,
-        ICollectionFixture<PaymentProcessResultFixture>
+        ICollectionFixture<CreatePaymentRequestFixture>, 
+        ICollectionFixture<PaymentDetailsFixture>,
+        ICollectionFixture<PaymentProcessResultFixture>,
+        ICollectionFixture<AcquiringBankResponseFixture>
     { }
 }

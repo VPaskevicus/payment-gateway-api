@@ -1,20 +1,22 @@
 ﻿using System.Collections.Concurrent;
+using Checkout.Payment.Gateway.Api.Interfaces;
+using Checkout.Payment.Gateway.Api.Models;
 
 namespace Checkout.Payment.Gateway.Api.Repositories
 {
     public class InMemoryDataStore : IPaymentRepository
     {
-        private readonly ConcurrentDictionary<Guid, Models.Payment> _inMemoryStore;
+        private readonly ConcurrentDictionary<Guid, PaymentDetails> _inMemoryDataStore;
 
         public InMemoryDataStore()
         {
-            _inMemoryStore = new ConcurrentDictionary<Guid, Models.Payment>();
+            _inMemoryDataStore = new ConcurrentDictionary<Guid, PaymentDetails>();
         }
 
 
-        public Task<bool> AddPaymentAsync(Models.Payment payment)
+        public Task<bool> AddPaymentDetailsAsync(Guid paymentId, PaymentDetails paymentDetails)
         {
-            var result = _inMemoryStore.TryAdd(payment.PaymentId, payment);
+            var result = _inMemoryDataStore.TryAdd(paymentId, paymentDetails);
 
             return Task.FromResult(result);
 

@@ -4,6 +4,6 @@ namespace Checkout.Payment.Gateway.Api.Interfaces
 {
     public interface IAcquiringBank
     {
-        Task<PaymentResponse> ProcessPaymentAsync(Models.Payment payment);
+        Task<AcquiringBankResponse> ProcessPaymentAsync(PaymentDetails paymentDetails);
     }
 }

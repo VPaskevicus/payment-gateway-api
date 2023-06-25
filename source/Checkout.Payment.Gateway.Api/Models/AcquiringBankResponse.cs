@@ -1,6 +1,6 @@
 ﻿namespace Checkout.Payment.Gateway.Api.Models
 {
-    public  class PaymentResponse
+    public  class AcquiringBankResponse
     {
         public Guid PaymentId { get; set; }
 

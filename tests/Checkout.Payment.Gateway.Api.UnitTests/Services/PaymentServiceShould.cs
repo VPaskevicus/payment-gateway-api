@@ -1,6 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Models;
-using Checkout.Payment.Gateway.Api.Repositories;
 using Checkout.Payment.Gateway.Api.Services;
 using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 using Moq;
@@ -15,56 +14,80 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
 
         private readonly PaymentService _paymentService;
 
-        private readonly PaymentFixture _paymentFixture;
+        private readonly PaymentDetailsFixture _paymentDetailsFixture;
+        private readonly AcquiringBankResponseFixture _acquiringBankResponseFixture;
 
-
-
-        public PaymentServiceShould(PaymentFixture paymentFixture)
+        public PaymentServiceShould(PaymentDetailsFixture paymentDetailsFixture, AcquiringBankResponseFixture acquiringBankResponseFixture)
         {
             _acquiringBankMock = new Mock<IAcquiringBank>();
             _paymentRepositoryMock = new Mock<IPaymentRepository>();
             
             _paymentService = new PaymentService(_acquiringBankMock.Object, _paymentRepositoryMock.Object);
 
-            _paymentFixture = paymentFixture;
+            _paymentDetailsFixture = paymentDetailsFixture;
+            _acquiringBankResponseFixture = acquiringBankResponseFixture;
         }
 
         [Fact]
-        public async Task AddPaymentRecordToDataStoreWhenProcessPaymentAsyncIsCalled()
+        public async Task ReturnPaymentDetailsProcessResultWhenProcessPaymentAsyncIsCalled()
         {
-            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(
-                new PaymentResponse { PaymentId = _paymentFixture.BasicPayment.PaymentId, StatusCode = "001" });
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
 
-            _paymentRepositoryMock.Setup(m => m.AddPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(true);
+            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
 
-            var payment = _paymentFixture.BasicPayment;
+            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(true);
 
-            await _paymentService.ProcessPaymentAsync(payment);
+            var paymentDetailsProcessResult = await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
 
-            _paymentRepositoryMock.Verify(m => m.AddPaymentAsync(payment));
+            paymentDetailsProcessResult.AcquiringBankResponse.Should().BeSameAs(basicAcquiringBankResponse);
+            paymentDetailsProcessResult.PaymentDetails.Should().BeSameAs(basicPaymentDetails);
+        }
+
+        [Fact]
+        public async Task AddPaymentDetailsToDataStoreWhenProcessPaymentAsyncIsCalled()
+        {
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
+
+            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
+
+            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(true);
+
+            await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
+
+            _paymentRepositoryMock.Verify(m =>
+                m.AddPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId, basicPaymentDetails));
         }
 
         [Fact]
         public async Task CallAcquiringBankProcessPaymentAsyncWhenProcessPaymentAsyncIsCalled()
         {
-            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(
-                new PaymentResponse { PaymentId = _paymentFixture.BasicPayment.PaymentId, StatusCode = "001" });
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
 
-            _paymentRepositoryMock.Setup(m => m.AddPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(true);
+            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
 
-            var payment = _paymentFixture.BasicPayment;
+            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+                .ReturnsAsync(true);
 
-            await _paymentService.ProcessPaymentAsync(payment);
+            await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
 
-            _acquiringBankMock.Verify(m => m.ProcessPaymentAsync(payment));
+            _acquiringBankMock.Verify(m => m.ProcessPaymentAsync(basicPaymentDetails));
         }
 
         [Fact]
         public async Task ThrowExceptionWhenPaymentRepositoryThrowsException()
         {
-            _paymentRepositoryMock.Setup(m => m.AddPaymentAsync(It.IsAny<Models.Payment>())).Throws(new Exception());
+            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+                .Throws(new Exception());
 
-            Func<Task> function = async () => await _paymentService.ProcessPaymentAsync(_paymentFixture.BasicPayment);
+            Func<Task> function = async () => await _paymentService.ProcessPaymentDetailsAsync(_paymentDetailsFixture.BasicPaymentDetails);
 
             await function.Should().ThrowAsync<Exception>();
         }

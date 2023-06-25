@@ -1,13 +1,11 @@
-﻿using Checkout.Payment.Gateway.Api.Extensions;
-using Checkout.Payment.Gateway.Api.Interfaces;
+﻿using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Models;
-using Checkout.Payment.Gateway.Api.Repositories;
 
 namespace Checkout.Payment.Gateway.Api.Services
 {
     public interface IPaymentService
     {
-        Task<PaymentProcessResult> ProcessPaymentAsync(Models.Payment payment);
+        Task<PaymentDetailsProcessResult> ProcessPaymentDetailsAsync(PaymentDetails paymentDetails);
     }
 
     public class PaymentService : IPaymentService
@@ -22,15 +20,13 @@ namespace Checkout.Payment.Gateway.Api.Services
         }
 
 
-        public async Task<PaymentProcessResult> ProcessPaymentAsync(Models.Payment payment)
+        public async Task<PaymentDetailsProcessResult> ProcessPaymentDetailsAsync(PaymentDetails paymentDetails)
         {
-            var response = await _acquiringBank.ProcessPaymentAsync(payment);
+            var acquiringBankResponse = await _acquiringBank.ProcessPaymentAsync(paymentDetails);
 
-            payment.SetPaymentId(response.PaymentId);
+            await _paymentRepository.AddPaymentDetailsAsync(acquiringBankResponse.PaymentId, paymentDetails);
 
-            await _paymentRepository.AddPaymentAsync(payment);
-
-            return new PaymentProcessResult(response, payment);
+            return new PaymentDetailsProcessResult(acquiringBankResponse, paymentDetails);
         }
     }
 }

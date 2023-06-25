@@ -6,36 +6,36 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Checkout.Payment.Gateway.Api.Controllers
 {
-    [Route("/payment")]
+    [Route("/paymentDetails")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly IPaymentMapper _paymentMapper;
+        private readonly IRequestMapper _requestMapper;
         private readonly IPaymentService _paymentService;
-        private readonly IPaymentResponseBuilder _paymentResponseBuilder;
+        private readonly IResponseBuilder _responseBuilder;
 
         public PaymentController(
-            IPaymentMapper paymentMapper, 
+            IRequestMapper requestMapper, 
             IPaymentService paymentService, 
-            IPaymentResponseBuilder paymentResponseBuilder)
+            IResponseBuilder responseBuilder)
         {
-            _paymentMapper = paymentMapper;
+            _requestMapper = requestMapper;
             _paymentService = paymentService;
-            _paymentResponseBuilder = paymentResponseBuilder;
+            _responseBuilder = responseBuilder;
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
+        public async Task<ActionResult> CreatePayment([FromBody] CreatePaymentRequest createPaymentRequest)
         {
             try
             {
-                var payment = _paymentMapper.MapPaymentRequestToDomainModel(paymentRequest);
+                var paymentDetails = _requestMapper.MapToDomainModel(createPaymentRequest);
 
-                var paymentProcessResult = await _paymentService.ProcessPaymentAsync(payment);
+                var paymentDetailsProcessResult = await _paymentService.ProcessPaymentDetailsAsync(paymentDetails);
 
-                var response = _paymentResponseBuilder.BuildCreatePaymentResponse(paymentProcessResult);
+                var createPaymentResponse = _responseBuilder.BuildResponse(paymentDetailsProcessResult);
 
-                return Ok(response);
+                return Ok(createPaymentResponse);
             }
             catch (Exception)
             {

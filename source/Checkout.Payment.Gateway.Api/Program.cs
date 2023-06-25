@@ -1,5 +1,5 @@
-using Checkout.Payment.Gateway.Api;
 using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Fakes;
 using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Repositories;
@@ -14,9 +14,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IPaymentMapper, PaymentMapper>();
+builder.Services.AddSingleton<IRequestMapper, RequestMapper>();
 builder.Services.AddSingleton<IPaymentService, PaymentService>();
-builder.Services.AddSingleton<IPaymentResponseBuilder, PaymentResponseBuilder>();
+builder.Services.AddSingleton<IResponseBuilder, ResponseBuilder>();
 
 builder.Services.AddSingleton<IPaymentRepository, InMemoryDataStore>();
 builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();

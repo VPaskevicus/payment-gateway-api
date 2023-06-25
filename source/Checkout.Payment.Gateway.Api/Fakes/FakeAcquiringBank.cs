@@ -1,13 +1,13 @@
 ﻿using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Models;
 
-namespace Checkout.Payment.Gateway.Api
+namespace Checkout.Payment.Gateway.Api.Fakes
 {
     public class FakeAcquiringBank : IAcquiringBank
     {
-        public Task<PaymentResponse> ProcessPaymentAsync(Models.Payment payment)
+        public Task<AcquiringBankResponse> ProcessPaymentAsync(PaymentDetails paymentDetails)
         {
-            return Task.FromResult(new PaymentResponse
+            return Task.FromResult(new AcquiringBankResponse
             {
                 PaymentId = Guid.NewGuid(),
                 StatusCode = "001"
