@@ -27,7 +27,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 var paymentProcessResult = await _paymentService.ProcessPaymentAsync(payment);
 
-                return Ok(paymentProcessResult);
+                return Ok();
             }
             catch (Exception)
             {

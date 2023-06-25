@@ -15,6 +15,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         private readonly PaymentController _paymentController;
 
         private readonly PaymentRequest _basicPaymentRequest;
+
         private readonly Mock<IPaymentMapper> _paymentMapperMock;
         private readonly Mock<IPaymentService> _paymentServiceMock;
 
