@@ -1,6 +1,6 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts;
 
-namespace Checkout.Payment.Gateway.Api.UnitTests.Builders
+namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders
 {
     public  class CardDetailsBuilder
     {

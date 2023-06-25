@@ -1,37 +1,41 @@
-﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
+﻿using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Checkout.Payment.Gateway.Api.Controllers
 {
-    [Route("/payment")]
+    [Route("/paymentDetails")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly IPaymentMapper _paymentMapper;
+        private readonly IRequestMapper _requestMapper;
         private readonly IPaymentService _paymentService;
+        private readonly IResponseBuilder _responseBuilder;
 
-        public PaymentController(IPaymentMapper paymentMapper, IPaymentService paymentService)
+        public PaymentController(
+            IRequestMapper requestMapper, 
+            IPaymentService paymentService, 
+            IResponseBuilder responseBuilder)
         {
-            _paymentMapper = paymentMapper;
+            _requestMapper = requestMapper;
             _paymentService = paymentService;
+            _responseBuilder = responseBuilder;
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePayment([FromBody]PaymentRequest paymentRequest)
+        public async Task<ActionResult> CreatePayment([FromBody] CreatePaymentRequest createPaymentRequest)
         {
             try
             {
-                var payment = _paymentMapper.MapPaymentRequestToDomainModel(paymentRequest);
+                var paymentDetails = _requestMapper.MapToDomainModel(createPaymentRequest);
 
-                var result = await _paymentService.ProcessPaymentAsync(payment);
+                var paymentDetailsProcessResult = await _paymentService.ProcessPaymentDetailsAsync(paymentDetails);
 
-                if (result)
-                {
-                    return Ok();
-                }
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                var createPaymentResponse = _responseBuilder.BuildResponse(paymentDetailsProcessResult);
+
+                return Ok(createPaymentResponse);
             }
             catch (Exception)
             {

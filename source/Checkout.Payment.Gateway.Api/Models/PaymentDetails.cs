@@ -1,13 +1,11 @@
 ﻿namespace Checkout.Payment.Gateway.Api.Models
 {
-    public class Payment
+    public class PaymentDetails
     {
-        public Guid PaymentId { get; set; }
         public Guid? ShopperId { get; set; }
         public Guid? MerchantId { get; set; }
         public string? Currency { get; set; }
         public decimal? Amount { get; set; }
-        public CardDetails? ShopperCardDetails { get; set; }
-
+        public CardDetails? CardDetails { get; set; }
     }
 }

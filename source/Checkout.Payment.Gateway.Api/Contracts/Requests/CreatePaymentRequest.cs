@@ -2,11 +2,8 @@
 
 namespace Checkout.Payment.Gateway.Api.Contracts.Requests
 {
-    public class PaymentRequest
+    public class CreatePaymentRequest
     {
-        [Required]
-        public Guid? PaymentId { get; set; }
-
         [Required]
         public Guid? ShopperId { get; set; }
 
@@ -22,6 +19,6 @@ namespace Checkout.Payment.Gateway.Api.Contracts.Requests
         public decimal? Amount { get; set; }
 
         [Required]
-        public CardDetails ShopperCardDetails { get; set; } = new();
+        public CardDetails CardDetails { get; set; } = new();
     }
 }
