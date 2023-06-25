@@ -19,19 +19,15 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePayment([FromBody]PaymentRequest paymentRequest)
+        public async Task<ActionResult> CreatePayment([FromBody] PaymentRequest paymentRequest)
         {
             try
             {
                 var payment = _paymentMapper.MapPaymentRequestToDomainModel(paymentRequest);
 
-                var result = await _paymentService.ProcessPaymentAsync(payment);
+                var paymentProcessResult = await _paymentService.ProcessPaymentAsync(payment);
 
-                if (result)
-                {
-                    return Ok();
-                }
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return Ok(paymentProcessResult);
             }
             catch (Exception)
             {

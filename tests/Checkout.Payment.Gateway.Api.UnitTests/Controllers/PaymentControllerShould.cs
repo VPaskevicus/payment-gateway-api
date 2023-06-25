@@ -1,6 +1,7 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Controllers;
 using Checkout.Payment.Gateway.Api.Mappers;
+using Checkout.Payment.Gateway.Api.Models;
 using Checkout.Payment.Gateway.Api.Services;
 using Checkout.Payment.Gateway.Api.UnitTests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
@@ -31,22 +32,11 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         [Fact]
         public async Task Return200OkWhenPaymentProcessedSuccessfully()
         {
-            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(true);
+            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>())).ReturnsAsync(new PaymentProcessResult(new PaymentResponse(), new Models.Payment()));
 
             var response = await _paymentController.CreatePayment(_basicPaymentRequest);
 
             ((StatusCodeResult)response).StatusCode.Should().Be(200);
-        }
-
-        [Fact]
-        public async Task Return500InternalServerErrorIfPaymentServiceReturnsUnsuccessful()
-        {
-            _paymentServiceMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<Models.Payment>()))
-                .ReturnsAsync(false);
-
-            var response = await _paymentController.CreatePayment(_basicPaymentRequest);
-
-            ((StatusCodeResult)response).StatusCode.Should().Be(500);
         }
 
         [Fact]

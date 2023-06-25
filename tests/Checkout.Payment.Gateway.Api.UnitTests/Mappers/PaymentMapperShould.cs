@@ -29,12 +29,12 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Mappers
             payment.MerchantId.Should().Be(paymentRequest.MerchantId);
             payment.Currency.Should().Be(paymentRequest.Currency);
             payment.Amount.Should().Be(paymentRequest.Amount);
-            payment.ShopperCardDetails.Should().NotBeNull();
-            payment.ShopperCardDetails!.NameOnCard.Should().Be(paymentRequest.ShopperCardDetails!.NameOnCard);
-            payment.ShopperCardDetails.CardNumber.Should().Be(paymentRequest.ShopperCardDetails.CardNumber);
-            payment.ShopperCardDetails.ExpirationMonth.Should().Be(paymentRequest.ShopperCardDetails.ExpirationMonth);
-            payment.ShopperCardDetails.ExpirationYear.Should().Be(paymentRequest.ShopperCardDetails.ExpirationYear);
-            payment.ShopperCardDetails.SecurityCode.Should().Be(paymentRequest.ShopperCardDetails.SecurityCode);
+            payment.CardDetails.Should().NotBeNull();
+            payment.CardDetails!.NameOnCard.Should().Be(paymentRequest.ShopperCardDetails!.NameOnCard);
+            payment.CardDetails.CardNumber.Should().Be(paymentRequest.ShopperCardDetails.CardNumber);
+            payment.CardDetails.ExpirationMonth.Should().Be(paymentRequest.ShopperCardDetails.ExpirationMonth);
+            payment.CardDetails.ExpirationYear.Should().Be(paymentRequest.ShopperCardDetails.ExpirationYear);
+            payment.CardDetails.SecurityCode.Should().Be(paymentRequest.ShopperCardDetails.SecurityCode);
         }
 
         [Fact]

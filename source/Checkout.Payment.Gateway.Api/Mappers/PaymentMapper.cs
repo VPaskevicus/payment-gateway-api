@@ -18,7 +18,7 @@ namespace Checkout.Payment.Gateway.Api.Mappers
                 MerchantId = paymentRequest.MerchantId,
                 Currency = paymentRequest.Currency,
                 Amount = paymentRequest.Amount,
-                ShopperCardDetails = MapCardDetails(paymentRequest.ShopperCardDetails)
+                CardDetails = MapCardDetails(paymentRequest.ShopperCardDetails)
             };
         }
 
