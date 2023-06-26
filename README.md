@@ -59,8 +59,8 @@ CardDetails
 ```
 {
     "payment": {
-        Id: "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18",
-        statusCode: "001"
+        "id": "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18",
+        "statusCode": "001"
     }
 }
 ```
@@ -74,13 +74,13 @@ CardDetails
 ## 400 Bad Request - RESPONSE BODY
 ```
 {
-	"title": "One or more validation errors occured."
-	"status": 400
+    "title": "One or more validation errors occurred.",
+    "status": 400,
     "errors": [
         "Shopper id is required",
-        "Merchant id is required"
+        "Merchant id is required",
     	"Currency is required",
-  		"Amount is required",
+        "Amount is required",
     	"Name on card is required",
   		"Card number is required",
     	"Expiration month is required",
