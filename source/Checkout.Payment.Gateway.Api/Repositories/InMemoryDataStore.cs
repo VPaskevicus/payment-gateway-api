@@ -16,20 +16,41 @@ namespace Checkout.Payment.Gateway.Api.Repositories
 
         public Task<bool> AddPaymentDetailsAsync(Guid paymentId, PaymentDetails paymentDetails)
         {
-            var result = _inMemoryDataStore.TryAdd(paymentId, paymentDetails);
+            try
+            {
+                var result = _inMemoryDataStore.TryAdd(paymentId, paymentDetails);
 
-            return Task.FromResult(result);
-
+                return Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                // add code to track dependency using telemetry client
+            }
         }
 
         public Task<PaymentDetails?> GetPaymentDetailsAsync(Guid? paymentId)
         {
             if (paymentId.HasValue)
             {
-                var found = _inMemoryDataStore.TryGetValue(paymentId.Value, out var result);
-                return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
-            }
+                try
+                {
+                    var found = _inMemoryDataStore.TryGetValue(paymentId.Value, out var result);
+                    return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                finally
+                {
+                    // add code to track dependency using telemetry client
+                }
 
+            }
             return Task.FromResult<PaymentDetails?>(null);
         }
     }

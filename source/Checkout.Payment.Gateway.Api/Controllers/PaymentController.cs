@@ -45,7 +45,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
             }
             catch (Exception ex)
             {
-                _paymentControllerLogger.LogCritical(
+                _paymentControllerLogger.LogError(
                     message: "Exception occurred while processing payment request with id.", exception: ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
@@ -74,7 +74,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
             }
             catch (Exception ex)
             {
-                _paymentControllerLogger.LogCritical(
+                _paymentControllerLogger.LogError(
                     message:
                     $"Exception occurred while getting payment details with id {getPaymentDetailsRequest.PaymentId}.",
                     exception: ex);

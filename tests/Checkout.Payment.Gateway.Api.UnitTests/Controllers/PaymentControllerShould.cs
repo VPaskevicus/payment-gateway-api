@@ -161,7 +161,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
             await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
 
             _paymentControllerLoggerMock.Verify(logger => logger.Log(
-                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Critical),
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                     It.Is<EventId>(eventId => eventId.Id == 0),
                     It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Exception occurred while processing payment request with id." && @type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
@@ -180,7 +180,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
             await _paymentController.GetPaymentDetails(getPaymentDetailsRequest);
 
             _paymentControllerLoggerMock.Verify(logger => logger.Log(
-                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Critical),
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                     It.Is<EventId>(eventId => eventId.Id == 0),
                     It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == $"Exception occurred while getting payment details with id {getPaymentDetailsRequest.PaymentId}." && @type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
