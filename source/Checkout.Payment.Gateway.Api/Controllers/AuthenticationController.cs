@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using Checkout.Payment.Gateway.Api.Contracts.Requests;
-using Checkout.Payment.Gateway.Api.Contracts.Responses;
 using Checkout.Payment.Gateway.Api.Interfaces;
+using Checkout.Payment.Gateway.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,41 +15,46 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
 
-        public AuthenticationController(IConfiguration configuration, IUserRepository userRepository)
+        private readonly ILogger<AuthenticationController> _authenticationControllerLogger;
+
+        public AuthenticationController(
+            IConfiguration configuration, 
+            IUserRepository userRepository,
+            ILogger<AuthenticationController> authenticationControllerLogger)
         {
             _configuration = configuration;
             _userRepository = userRepository;
+            _authenticationControllerLogger = authenticationControllerLogger;
         }
-
-        [HttpPost]
-        [Route("/register")]
-        public async Task<ActionResult<string>> Authenticate(RegistrationRequest registrationRequest)
-        {
-            var added = await _userRepository.AddUserAsync(
-                registrationRequest.Username, registrationRequest.Password);
-
-            if (added)
-            {
-                return Created(string.Empty,
-                    new AuthenticateResponse { User = registrationRequest.Username, StatusCode = "c_001" });
-            }
-
-            return BadRequest();
-        }
-
 
         [HttpPost]
         [Route("/authenticate")]
         public async Task<ActionResult<string>> Authenticate(AuthenticationRequest authenticationRequest)
         {
-            var user = await _userRepository.GetUserAsync(
-                authenticationRequest.Username, authenticationRequest.Password);
-
-            if (user == null)
+            try
             {
-                return Unauthorized();
-            }
+                var user = await _userRepository.GetUserAsync(
+                    authenticationRequest.Username, authenticationRequest.Password);
 
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                var userToken = CreateUserToken(user);
+
+                return Ok(userToken);
+            }
+            catch (Exception ex)
+            {
+                _authenticationControllerLogger.LogError(
+                    message: "Exception occurred while authenticating the user.", exception: ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        private string CreateUserToken(User user)
+        {
             var securityKey =
                 new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Authentication:SecurityKey"]));
 
@@ -70,9 +75,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
                 signingCredentials
             );
 
-            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-
-            return Ok(token);
+            return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
     }
 }

@@ -2,11 +2,13 @@
 using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Checkout.Payment.Gateway.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly IRequestMapper _requestMapper;
@@ -46,7 +48,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
             catch (Exception ex)
             {
                 _paymentControllerLogger.LogError(
-                    message: "Exception occurred while processing payment request with id.", exception: ex);
+                    message: "Exception occurred while processing payment request.", exception: ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

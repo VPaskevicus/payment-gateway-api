@@ -14,8 +14,11 @@ namespace Checkout.Payment.Gateway.Api.Repositories
         }
 
 
-        public Task<bool> AddUserAsync(string username, string password)
+        public Task<bool> AddUserAsync(string? username, string? password)
         {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) 
+                return Task.FromResult(false);
+            
             try
             {
                 var result = _inMemoryUserDataStore.TryAdd(username, new User(username, password));
@@ -32,30 +35,29 @@ namespace Checkout.Payment.Gateway.Api.Repositories
             }
         }
 
-        public Task<User?> GetUserAsync(string username, string password)
+        public Task<User?> GetUserAsync(string? username, string? password)
         {
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) 
+                return Task.FromResult<User?>(null);
+            
+            try
             {
-                try
+                var found = _inMemoryUserDataStore.TryGetValue(username, out var user);
+                if (found && user!.Password.Equals(password))
                 {
-                    var found = _inMemoryUserDataStore.TryGetValue(username, out var user);
-                    if (found && user!.Password.Equals(password))
-                    {
-                        return Task.FromResult<User?>(user);
-                    }
+                    return Task.FromResult<User?>(user);
+                }
 
-                    return Task.FromResult<User?>(null);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    // add code to track dependency using telemetry client
-                }
+                return Task.FromResult<User?>(null);
             }
-            return Task.FromResult<User?>(null);
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // add code to track dependency using telemetry client
+            }
         }
     }
 }
