@@ -34,24 +34,22 @@ namespace Checkout.Payment.Gateway.Api.Repositories
 
         public Task<PaymentDetails?> GetPaymentDetailsAsync(Guid? paymentId)
         {
-            if (paymentId.HasValue)
+            if (!paymentId.HasValue)
+                return Task.FromResult<PaymentDetails?>(null);
+            
+            try
             {
-                try
-                {
-                    var found = _inMemoryPaymentDetailsDataStore.TryGetValue(paymentId.Value, out var result);
-                    return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    // add code to track dependency using telemetry client
-                }
-
+                var found = _inMemoryPaymentDetailsDataStore.TryGetValue(paymentId.Value, out var result);
+                return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
             }
-            return Task.FromResult<PaymentDetails?>(null);
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                // add code to track dependency using telemetry client
+            }
         }
     }
 }

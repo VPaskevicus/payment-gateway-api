@@ -62,8 +62,8 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
             var claimsForToken = new List<Claim>
             {
-                new("user_name", user.Username),
-                new("user_password", user.Password)
+                new("username", user.Username),
+                new("password", user.Password)
             };
 
             var jwtSecurityToken = new JwtSecurityToken(

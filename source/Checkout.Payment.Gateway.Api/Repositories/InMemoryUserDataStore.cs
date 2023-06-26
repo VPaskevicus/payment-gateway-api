@@ -13,7 +13,6 @@ namespace Checkout.Payment.Gateway.Api.Repositories
             _inMemoryUserDataStore = new ConcurrentDictionary<string, User>();
         }
 
-
         public Task<bool> AddUserAsync(string? username, string? password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) 

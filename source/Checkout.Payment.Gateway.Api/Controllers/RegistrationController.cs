@@ -32,8 +32,8 @@ namespace Checkout.Payment.Gateway.Api.Controllers
                 if (added)
                 {
                     return Created(string.Empty,
-                        new AuthenticateResponse
-                        { User = registrationRequest.Username, StatusCode = "c_001" });
+                        new RegistrationResponse
+                        { Username = registrationRequest.Username, StatusCode = "c_001" });
                 }
 
                 return BadRequest();

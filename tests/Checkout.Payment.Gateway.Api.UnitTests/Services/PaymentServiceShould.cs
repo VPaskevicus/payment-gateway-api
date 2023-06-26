@@ -134,12 +134,23 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
         }
 
         [Fact]
-        public async Task ThrowExceptionWhenPaymentDetailsRepositoryThrowsException()
+        public async Task ThrowExceptionWhenPaymentDetailsRepositoryProcessPaymentDetailsAsyncThrowsException()
         {
             _paymentDetailsRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
                 .Throws(new Exception());
 
             Func<Task> function = async () => await _paymentService.ProcessPaymentDetailsAsync(_paymentDetailsFixture.BasicPaymentDetails);
+
+            await function.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public async Task ThrowExceptionWhenPaymentDetailsRepositoryGetPaymentDetailsAsyncThrowsException()
+        {
+            _paymentDetailsRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+                .Throws(new Exception());
+
+            Func<Task> function = async () => await _paymentService.GetPaymentDetailsAsync(Guid.NewGuid());
 
             await function.Should().ThrowAsync<Exception>();
         }

@@ -5,7 +5,6 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
     [Collection("UnitTestFixtures")]
     public class RegistrationRequestShould
     {
-        
         [Fact]
         public void ReturnValidResultWhenModelIsValid()
         {
@@ -17,8 +16,6 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
 
             validationResult.Should().BeEmpty();
         }
-
-
 
         [Theory]
         [InlineData("vpask", "must be a string with a minimum length of 6 and a maximum length of 30")]
