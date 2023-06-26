@@ -1,5 +1,4 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
-using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.Contracts.Validators
 {

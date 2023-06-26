@@ -8,6 +8,7 @@ We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the
 - **RequestValidator**: Validates request parameters (mandatory fields)
     - **Controller**: Performs request execution
         - **PaymentService**: Performs payment logic for storing, quering and forwarging payment request to acquiring bank
+        - **RequestMapper**: Mapps contract request to domain model
             - **AcquiringBank**: Performs the client call to acquiring bank and builds retrieved response to domain model 
             - **PaymentRepository**: Performs data store operations for payment requests
         - **ResponseBuilder**: Builds response for a consumer 
@@ -105,8 +106,8 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
 ```
 {
     "payment": {
-        Id: "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18"
-        statusCode: 001
+        "id": "b81e58f3-dad1-42ac-b17e-535aa3ae0317",
+        "statusCode": "001"
     },
     "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
     "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
@@ -114,7 +115,7 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
     "amount": 156.60,
     "cardDetails": {
         "nameOnCard": "Vladimirs Paskevicus",
-        "cardNumber": "**** **** **** 1234",
+        "cardNumber": "****************",
         "expirationMonth": 3,
         "expirationYear": 2027,
         "securityCode": 555
@@ -124,8 +125,10 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
 ## 404 Not Found - RESPONSE BODY
 ```
 {
-	"title": "Not Found"
-	"status": 404
+    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    "title": "Not Found",
+    "status": 404,
+    "traceId": "00-7a94f00664a5fd2119611fb655c5549c-6b32cc1a6f86ce25-00"
 }
 ```
 ## 500 Internal Server Error - RESPONSE BODY
@@ -139,16 +142,15 @@ GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
 ```
 
 # Run Payment Gateway API locally
-In order to test the application request pipeline tunning the application locally, we can use an in-memory data store that will simulate the addition of a payment record. Also, we can use fake acquiring bank implementation to simulate the payment process.
+In order to run and test the application and request pipeline, we can use an in-memory data store and fake acquiring bank that will simulate the process of a payment request. 
 
-Using the IAcquiringBank interface, we can implement the integration part of the application that will contain the client-related code. The implementation class can then be swapped with the temporary fake when going to the production environment.
+Using the IAcquiringBank interface, we can implement the integration part of the application that will contain the client-related code. The real implementation class can then be swapped with the current temporary fake when going to the production environment.
 
-Make sure that the application uses InMemoryDataStore and FakeAcquiringBank.
+For testing purposes, make sure that the application uses InMemoryDataStore and FakeAcquiringBank in <b>Program.cs</b>
 
-In Program.cs
 ```
 builder.Services.AddSingleton<IPaymentRepository, InMemoryDataStore>();
 builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
 ```
 
-Execute the POST request using Postman and create the payment specification above.
+Execute the POST request using Postman, refer to the request specification above.
