@@ -1,8 +1,15 @@
-﻿namespace Checkout.Payment.Gateway.Api.Contracts.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Checkout.Payment.Gateway.Api.Contracts.Requests
 {
     public class AuthenticationRequest
     {
-        public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        [Required]
+        [StringLength(30, MinimumLength = 6)]
+        public string? Username { get; set; }
+
+        [Required]
+        [StringLength(30, MinimumLength = 6)]
+        public string? Password { get; set; }
     }
 }

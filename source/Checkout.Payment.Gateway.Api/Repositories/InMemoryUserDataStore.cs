@@ -14,11 +14,11 @@ namespace Checkout.Payment.Gateway.Api.Repositories
         }
 
 
-        public Task<bool> AddUserAsync(string userName, string password)
+        public Task<bool> AddUserAsync(string username, string password)
         {
             try
             {
-                var result = _inMemoryUserDataStore.TryAdd(userName, new User(userName, password));
+                var result = _inMemoryUserDataStore.TryAdd(username, new User(username, password));
 
                 return Task.FromResult(result);
             }
@@ -32,13 +32,13 @@ namespace Checkout.Payment.Gateway.Api.Repositories
             }
         }
 
-        public Task<User?> GetUserAsync(string userName, string password)
+        public Task<User?> GetUserAsync(string username, string password)
         {
-            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 try
                 {
-                    var found = _inMemoryUserDataStore.TryGetValue(userName, out var user);
+                    var found = _inMemoryUserDataStore.TryGetValue(username, out var user);
                     if (found && user!.Password.Equals(password))
                     {
                         return Task.FromResult<User?>(user);

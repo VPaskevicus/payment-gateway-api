@@ -26,12 +26,12 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         public async Task<ActionResult<string>> Authenticate(RegistrationRequest registrationRequest)
         {
             var added = await _userRepository.AddUserAsync(
-                registrationRequest.UserName, registrationRequest.Password);
+                registrationRequest.Username, registrationRequest.Password);
 
             if (added)
             {
                 return Created(string.Empty,
-                    new AuthenticateResponse { User = registrationRequest.UserName, StatusCode = "c_001" });
+                    new AuthenticateResponse { User = registrationRequest.Username, StatusCode = "c_001" });
             }
 
             return BadRequest();
@@ -43,7 +43,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         public async Task<ActionResult<string>> Authenticate(AuthenticationRequest authenticationRequest)
         {
             var user = await _userRepository.GetUserAsync(
-                authenticationRequest.UserName, authenticationRequest.Password);
+                authenticationRequest.Username, authenticationRequest.Password);
 
             if (user == null)
             {
@@ -57,7 +57,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
             var claimsForToken = new List<Claim>
             {
-                new("user_name", user.UserName),
+                new("user_name", user.Username),
                 new("user_password", user.Password)
             };
 

@@ -2,13 +2,13 @@
 {
     public class User
     {
-        public User(string userName, string password)
+        public User(string username, string password)
         {
-            UserName = userName;
+            Username = username;
             Password = password;
         }
 
-        public string UserName { get; }
+        public string Username { get; }
         public string Password { get; }
     }
 }
