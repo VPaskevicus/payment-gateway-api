@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Checkout.Payment.Gateway.Api.Controllers
 {
-    [Route("/paymentDetails")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
@@ -15,8 +14,8 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         private readonly IResponseBuilder _responseBuilder;
 
         public PaymentController(
-            IRequestMapper requestMapper, 
-            IPaymentService paymentService, 
+            IRequestMapper requestMapper,
+            IPaymentService paymentService,
             IResponseBuilder responseBuilder)
         {
             _requestMapper = requestMapper;
@@ -25,6 +24,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         }
 
         [HttpPost]
+        [Route("/payment")]
         public async Task<ActionResult> CreatePayment([FromBody] CreatePaymentRequest createPaymentRequest)
         {
             try
@@ -33,9 +33,34 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 var paymentDetailsProcessResult = await _paymentService.ProcessPaymentDetailsAsync(paymentDetails);
 
-                var createPaymentResponse = _responseBuilder.BuildResponse(paymentDetailsProcessResult);
+                var createPaymentResponse = _responseBuilder.BuildCreatePaymentResponse(paymentDetailsProcessResult);
 
                 return Ok(createPaymentResponse);
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("/payment/{PaymentId}")]
+        public async Task<ActionResult> GetPaymentDetails([FromRoute] GetPaymentDetailsRequest getPaymentDetailsRequest)
+        {
+            try
+            {
+                var paymentDetailsProcessResult =
+                    await _paymentService.GetPaymentDetailsAsync(getPaymentDetailsRequest.PaymentId);
+
+                if (paymentDetailsProcessResult.NotFound())
+                {
+                    return NotFound();
+                }
+
+                var getPaymentDetailsResponse =
+                    _responseBuilder.BuildGetPaymentDetailsResponse(paymentDetailsProcessResult);
+
+                return Ok(getPaymentDetailsResponse);
             }
             catch (Exception)
             {

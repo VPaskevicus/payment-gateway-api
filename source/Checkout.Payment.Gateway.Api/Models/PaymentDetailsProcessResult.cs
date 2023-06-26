@@ -11,5 +11,10 @@
         public AcquiringBankResponse? AcquiringBankResponse { get; }
 
         public PaymentDetails? PaymentDetails { get; }
+
+        public bool NotFound()
+        {
+            return AcquiringBankResponse == null || PaymentDetails == null;
+        }
     }
 }

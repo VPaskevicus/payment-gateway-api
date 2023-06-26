@@ -7,7 +7,7 @@ namespace Checkout.Payment.Gateway.Api.Services
     {
         Task<PaymentDetailsProcessResult> ProcessPaymentDetailsAsync(PaymentDetails paymentDetails);
 
-        Task<PaymentDetailsProcessResult> GetPaymentDetailsAsync(Guid paymentId);
+        Task<PaymentDetailsProcessResult> GetPaymentDetailsAsync(Guid? paymentId);
     }
 
     public class PaymentService : IPaymentService
@@ -31,7 +31,7 @@ namespace Checkout.Payment.Gateway.Api.Services
             return new PaymentDetailsProcessResult(acquiringBankResponse, paymentDetails);
         }
 
-        public async Task<PaymentDetailsProcessResult> GetPaymentDetailsAsync(Guid paymentId)
+        public async Task<PaymentDetailsProcessResult> GetPaymentDetailsAsync(Guid? paymentId)
         {
             var acquiringBankResponseTask = _acquiringBank.GetPaymentStatusAsync(paymentId);
 

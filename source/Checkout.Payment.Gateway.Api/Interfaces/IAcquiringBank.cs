@@ -6,6 +6,6 @@ namespace Checkout.Payment.Gateway.Api.Interfaces
     {
         Task<AcquiringBankResponse> ProcessPaymentAsync(PaymentDetails paymentDetails);
         
-        Task<AcquiringBankResponse> GetPaymentStatusAsync(Guid paymentId);
+        Task<AcquiringBankResponse?> GetPaymentStatusAsync(Guid? paymentId);
     }
 }

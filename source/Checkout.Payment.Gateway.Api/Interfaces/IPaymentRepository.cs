@@ -6,6 +6,6 @@ namespace Checkout.Payment.Gateway.Api.Interfaces
     {
         Task<bool> AddPaymentDetailsAsync(Guid paymentId, PaymentDetails paymentDetails);
         
-        Task<PaymentDetails?> GetPaymentDetailsAsync(Guid paymentId);
+        Task<PaymentDetails?> GetPaymentDetailsAsync(Guid? paymentId);
     }
 }

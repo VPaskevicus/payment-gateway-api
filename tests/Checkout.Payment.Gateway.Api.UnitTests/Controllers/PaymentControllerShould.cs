@@ -1,4 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Builders;
+using Checkout.Payment.Gateway.Api.Contracts.Requests;
 using Checkout.Payment.Gateway.Api.Controllers;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Models;
@@ -12,29 +13,45 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
     [Collection("UnitTestFixtures")]
     public class PaymentControllerShould
     {
+        private const string ErrorMessage = "Something went wrong!";
+
         private readonly PaymentController _paymentController;
 
         private readonly CreatePaymentRequestFixture _createPaymentRequestFixture;
+        private readonly CreatePaymentResponseFixture _createPaymentResponseFixture;
+        private readonly GetPaymentDetailsResponseFixture _getPaymentDetailsResponseFixture;
+        private readonly PaymentProcessResultFixture _paymentProcessResultFixture;
 
+        private readonly Mock<IRequestMapper> _requestMapperMock;
         private readonly Mock<IPaymentService> _paymentServiceMock;
+        private readonly Mock<IResponseBuilder> _responseBuilderMock;
 
-        public PaymentControllerShould(CreatePaymentRequestFixture createPaymentRequestFixture) 
+        public PaymentControllerShould(
+            CreatePaymentRequestFixture createPaymentRequestFixture,
+            CreatePaymentResponseFixture createPaymentResponseFixture,
+            GetPaymentDetailsResponseFixture getPaymentDetailsResponseFixture,
+            PaymentProcessResultFixture paymentProcessResultFixture) 
         {
-            Mock<IRequestMapper> paymentMapperMock = new();
+            _requestMapperMock = new Mock<IRequestMapper>();
             _paymentServiceMock = new Mock<IPaymentService>();
-            Mock<IResponseBuilder> paymentResponseBuilder = new();
+            _responseBuilderMock = new Mock<IResponseBuilder>();
 
-            _paymentController = new PaymentController(paymentMapperMock.Object, _paymentServiceMock.Object,
-                paymentResponseBuilder.Object);
+            _paymentController = new PaymentController(
+                _requestMapperMock.Object, 
+                _paymentServiceMock.Object,
+                _responseBuilderMock.Object);
 
             _createPaymentRequestFixture = createPaymentRequestFixture;
+            _createPaymentResponseFixture = createPaymentResponseFixture;
+            _getPaymentDetailsResponseFixture = getPaymentDetailsResponseFixture;
+            _paymentProcessResultFixture = paymentProcessResultFixture;
         }
 
         [Fact]
-        public async Task Return200OkWhenPaymentProcessedSuccessfully()
+        public async Task Return200OkWhenCreatePaymentIsSuccessful()
         {
-            _paymentServiceMock.Setup(m => m.ProcessPaymentDetailsAsync(It.IsAny<PaymentDetails>()))
-                .ReturnsAsync(new PaymentDetailsProcessResult(new AcquiringBankResponse(), new PaymentDetails()));
+            _responseBuilderMock.Setup(m => m.BuildCreatePaymentResponse(It.IsAny<PaymentDetailsProcessResult>()))
+                .Returns(_createPaymentResponseFixture.BasicCreatePaymentResponse);
 
             var createPaymentResponse =
                 await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
@@ -43,12 +60,88 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task Return500InternalServerErrorIfPaymentServiceThrowsException()
+        public async Task Return500InternalServerErrorWhenRequestMapperThrowsException()
         {
-            _paymentServiceMock.Setup(m => m.ProcessPaymentDetailsAsync(It.IsAny<PaymentDetails>())).Throws(new Exception("something went wrong!"));
+            _requestMapperMock.Setup(m => m.MapToDomainModel(It.IsAny<CreatePaymentRequest>()))
+                .Throws(new Exception(ErrorMessage));
 
             var createPaymentResponse =
                 await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
+
+            ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task Return500InternalServerErrorWhenPaymentServiceProcessPaymentDetailsAsyncThrowsException()
+        {
+            _paymentServiceMock.Setup(m => m.ProcessPaymentDetailsAsync(It.IsAny<PaymentDetails>()))
+                .Throws(new Exception(ErrorMessage));
+
+            var createPaymentResponse =
+                await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
+
+            ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task Return500InternalServerErrorWhenResponseBuilderBuildCreatePaymentResponseThrowsException()
+        {
+            _responseBuilderMock.Setup(m => m.BuildCreatePaymentResponse(It.IsAny<PaymentDetailsProcessResult>()))
+                .Throws(new Exception(ErrorMessage));
+
+            var createPaymentResponse =
+                await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
+
+            ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task Return200OkWhenGetPaymentDetailsIsSuccessful()
+        {
+            _paymentServiceMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid?>()))
+                .ReturnsAsync(_paymentProcessResultFixture.BasicPaymentDetailsProcessResult);
+
+            _responseBuilderMock.Setup(m => m.BuildGetPaymentDetailsResponse(It.IsAny<PaymentDetailsProcessResult>()))
+                .Returns(_getPaymentDetailsResponseFixture.BasicGetPaymentDetailsResponse);
+
+            var createPaymentResponse =
+                await _paymentController.GetPaymentDetails(new GetPaymentDetailsRequest());
+
+            ((OkObjectResult)createPaymentResponse).StatusCode.Should().Be(200);
+        }
+
+        [Fact]
+        public async Task Return404NotFoundWhenPaymentDetailsProcessResultNotFound()
+        {
+            _paymentServiceMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid?>()))
+                .ReturnsAsync(_paymentProcessResultFixture.EmptyPaymentDetailsProcessResult);
+
+            var createPaymentResponse =
+                await _paymentController.GetPaymentDetails(new GetPaymentDetailsRequest());
+
+            ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task Return500InternalServerErrorWhenPaymentServiceGetPaymentDetailsAsyncThrowsException()
+        {
+            _paymentServiceMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid?>()))
+                .Throws(new Exception(ErrorMessage));
+
+            var createPaymentResponse =
+                await _paymentController.GetPaymentDetails(new GetPaymentDetailsRequest());
+
+            ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task Return500InternalServerErrorWhenResponseBuilderBuildGetPaymentDetailsResponseThrowsException()
+        {
+            _responseBuilderMock.Setup(m => m.BuildGetPaymentDetailsResponse(It.IsAny<PaymentDetailsProcessResult>()))
+                .Throws(new Exception(ErrorMessage));
+
+            var createPaymentResponse =
+                await _paymentController.GetPaymentDetails(new GetPaymentDetailsRequest());
 
             ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
         }
