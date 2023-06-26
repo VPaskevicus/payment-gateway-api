@@ -5,6 +5,8 @@
         ICollectionFixture<CreatePaymentRequestFixture>, 
         ICollectionFixture<PaymentDetailsFixture>,
         ICollectionFixture<PaymentProcessResultFixture>,
-        ICollectionFixture<AcquiringBankResponseFixture>
+        ICollectionFixture<AcquiringBankResponseFixture>,
+        ICollectionFixture<CreatePaymentResponseFixture>,
+        ICollectionFixture<GetPaymentDetailsResponseFixture>
     { }
 }

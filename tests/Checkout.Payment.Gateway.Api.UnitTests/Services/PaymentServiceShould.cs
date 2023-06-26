@@ -47,7 +47,25 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
         }
 
         [Fact]
-        public async Task AddPaymentDetailsToDataStoreWhenProcessPaymentAsyncIsCalled()
+        public async Task ReturnPaymentDetailsProcessResultWhenGetPaymentDetailsAsyncIsCalled()
+        {
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
+
+            _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
+
+            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicPaymentDetails);
+
+            var paymentDetailsProcessResult = await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
+            
+            paymentDetailsProcessResult.AcquiringBankResponse.Should().BeSameAs(basicAcquiringBankResponse);
+            paymentDetailsProcessResult.PaymentDetails.Should().BeSameAs(basicPaymentDetails);
+        }
+
+        [Fact]
+        public async Task CallAddPaymentDetailsAsyncWhenProcessPaymentAsyncIsCalled()
         {
             var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
             var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
@@ -62,6 +80,23 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
 
             _paymentRepositoryMock.Verify(m =>
                 m.AddPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId, basicPaymentDetails));
+        }
+
+        [Fact]
+        public async Task CallGetPaymentDetailsAsyncWhenGetPaymentDetailsAsyncIsCalled()
+        {
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
+
+            _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
+
+            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicPaymentDetails);
+
+            await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
+
+            _paymentRepositoryMock.Verify(m => m.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId));
         }
 
         [Fact]
@@ -82,9 +117,37 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
         }
 
         [Fact]
+        public async Task CallGetPaymentStatusAsyncWhenGetPaymentDetailsAsyncIsCalled()
+        {
+            var basicAcquiringBankResponse = _acquiringBankResponseFixture.BasicAcquiringBankResponse;
+            var basicPaymentDetails = _paymentDetailsFixture.BasicPaymentDetails;
+
+            _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicAcquiringBankResponse);
+
+            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(basicPaymentDetails);
+
+            await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
+
+            _acquiringBankMock.Verify(m => m.GetPaymentStatusAsync(basicAcquiringBankResponse.PaymentId));
+        }
+
+        [Fact]
         public async Task ThrowExceptionWhenPaymentRepositoryThrowsException()
         {
             _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+                .Throws(new Exception());
+
+            Func<Task> function = async () => await _paymentService.ProcessPaymentDetailsAsync(_paymentDetailsFixture.BasicPaymentDetails);
+
+            await function.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public async Task ThrowExceptionWhenAcquiringBankThrowsException()
+        {
+            _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
                 .Throws(new Exception());
 
             Func<Task> function = async () => await _paymentService.ProcessPaymentDetailsAsync(_paymentDetailsFixture.BasicPaymentDetails);

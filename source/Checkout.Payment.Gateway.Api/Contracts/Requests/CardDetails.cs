@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Checkout.Payment.Gateway.Api.Validation.Attributes;
 
-namespace Checkout.Payment.Gateway.Api.Contracts
+namespace Checkout.Payment.Gateway.Api.Contracts.Requests
 {
     public class CardDetails
     {

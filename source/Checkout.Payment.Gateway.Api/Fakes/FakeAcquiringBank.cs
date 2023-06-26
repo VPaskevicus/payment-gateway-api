@@ -13,5 +13,19 @@ namespace Checkout.Payment.Gateway.Api.Fakes
                 StatusCode = "001"
             });
         }
+
+        public Task<AcquiringBankResponse?> GetPaymentStatusAsync(Guid? paymentId)
+        {
+            if (paymentId.HasValue)
+            {
+                return Task.FromResult<AcquiringBankResponse?>(new AcquiringBankResponse
+                {
+                    PaymentId = paymentId.Value,
+                    StatusCode = "001"
+                });
+            }
+
+            return Task.FromResult<AcquiringBankResponse?>(null);
+        }
     }
 }

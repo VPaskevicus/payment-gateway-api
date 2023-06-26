@@ -2,14 +2,19 @@
 {
     public class PaymentDetailsProcessResult
     {
-        public PaymentDetailsProcessResult(AcquiringBankResponse acquiringBankResponse, PaymentDetails paymentDetails)
+        public PaymentDetailsProcessResult(AcquiringBankResponse? acquiringBankResponse, PaymentDetails? paymentDetails)
         {
             AcquiringBankResponse = acquiringBankResponse;
             PaymentDetails = paymentDetails;
         }
 
-        public AcquiringBankResponse AcquiringBankResponse { get; }
+        public AcquiringBankResponse? AcquiringBankResponse { get; }
 
-        public PaymentDetails PaymentDetails { get; }
+        public PaymentDetails? PaymentDetails { get; }
+
+        public bool NotFound()
+        {
+            return AcquiringBankResponse == null || PaymentDetails == null;
+        }
     }
 }
