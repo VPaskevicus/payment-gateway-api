@@ -4,13 +4,13 @@ using Checkout.Payment.Gateway.Api.Models;
 
 namespace Checkout.Payment.Gateway.Api.Repositories
 {
-    public class InMemoryDataStore : IPaymentRepository
+    public class InMemoryPaymentDetailsDataStore : IPaymentDetailsRepository
     {
-        private readonly ConcurrentDictionary<Guid, PaymentDetails> _inMemoryDataStore;
+        private readonly ConcurrentDictionary<Guid, PaymentDetails> _inMemoryPaymentDetailsDataStore;
 
-        public InMemoryDataStore()
+        public InMemoryPaymentDetailsDataStore()
         {
-            _inMemoryDataStore = new ConcurrentDictionary<Guid, PaymentDetails>();
+            _inMemoryPaymentDetailsDataStore = new ConcurrentDictionary<Guid, PaymentDetails>();
         }
 
 
@@ -18,11 +18,11 @@ namespace Checkout.Payment.Gateway.Api.Repositories
         {
             try
             {
-                var result = _inMemoryDataStore.TryAdd(paymentId, paymentDetails);
+                var result = _inMemoryPaymentDetailsDataStore.TryAdd(paymentId, paymentDetails);
 
                 return Task.FromResult(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -38,10 +38,10 @@ namespace Checkout.Payment.Gateway.Api.Repositories
             {
                 try
                 {
-                    var found = _inMemoryDataStore.TryGetValue(paymentId.Value, out var result);
+                    var found = _inMemoryPaymentDetailsDataStore.TryGetValue(paymentId.Value, out var result);
                     return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }

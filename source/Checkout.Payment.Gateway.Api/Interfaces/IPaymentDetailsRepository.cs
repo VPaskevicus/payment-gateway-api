@@ -2,7 +2,7 @@
 
 namespace Checkout.Payment.Gateway.Api.Interfaces
 {
-    public interface IPaymentRepository
+    public interface IPaymentDetailsRepository
     {
         Task<bool> AddPaymentDetailsAsync(Guid paymentId, PaymentDetails paymentDetails);
         

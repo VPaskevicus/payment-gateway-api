@@ -10,7 +10,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
     public  class PaymentServiceShould
     {
         private readonly Mock<IAcquiringBank> _acquiringBankMock;
-        private readonly Mock<IPaymentRepository> _paymentRepositoryMock;
+        private readonly Mock<IPaymentDetailsRepository> _paymentDetailsRepositoryMock;
 
         private readonly PaymentService _paymentService;
 
@@ -20,9 +20,9 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
         public PaymentServiceShould(PaymentDetailsFixture paymentDetailsFixture, AcquiringBankResponseFixture acquiringBankResponseFixture)
         {
             _acquiringBankMock = new Mock<IAcquiringBank>();
-            _paymentRepositoryMock = new Mock<IPaymentRepository>();
+            _paymentDetailsRepositoryMock = new Mock<IPaymentDetailsRepository>();
             
-            _paymentService = new PaymentService(_acquiringBankMock.Object, _paymentRepositoryMock.Object);
+            _paymentService = new PaymentService(_acquiringBankMock.Object, _paymentDetailsRepositoryMock.Object);
 
             _paymentDetailsFixture = paymentDetailsFixture;
             _acquiringBankResponseFixture = acquiringBankResponseFixture;
@@ -37,7 +37,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(true);
 
             var paymentDetailsProcessResult = await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
@@ -55,7 +55,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicPaymentDetails);
 
             var paymentDetailsProcessResult = await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
@@ -73,12 +73,12 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(true);
 
             await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
 
-            _paymentRepositoryMock.Verify(m =>
+            _paymentDetailsRepositoryMock.Verify(m =>
                 m.AddPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId, basicPaymentDetails), Times.Once);
         }
 
@@ -91,12 +91,12 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicPaymentDetails);
 
             await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
 
-            _paymentRepositoryMock.Verify(m => m.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId), Times.Once);
+            _paymentDetailsRepositoryMock.Verify(m => m.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId), Times.Once);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.ProcessPaymentAsync(It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
                 .ReturnsAsync(true);
 
             await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
@@ -125,7 +125,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             _acquiringBankMock.Setup(m => m.GetPaymentStatusAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicAcquiringBankResponse);
 
-            _paymentRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(basicPaymentDetails);
 
             await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
@@ -134,9 +134,9 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
         }
 
         [Fact]
-        public async Task ThrowExceptionWhenPaymentRepositoryThrowsException()
+        public async Task ThrowExceptionWhenPaymentDetailsRepositoryThrowsException()
         {
-            _paymentRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
+            _paymentDetailsRepositoryMock.Setup(m => m.AddPaymentDetailsAsync(It.IsAny<Guid>(), It.IsAny<PaymentDetails>()))
                 .Throws(new Exception());
 
             Func<Task> function = async () => await _paymentService.ProcessPaymentDetailsAsync(_paymentDetailsFixture.BasicPaymentDetails);

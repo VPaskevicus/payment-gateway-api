@@ -13,12 +13,12 @@ namespace Checkout.Payment.Gateway.Api.Services
     public class PaymentService : IPaymentService
     {
         private readonly IAcquiringBank _acquiringBank;
-        private readonly IPaymentRepository _paymentRepository;
+        private readonly IPaymentDetailsRepository _paymentDetailsRepository;
 
-        public PaymentService(IAcquiringBank acquiringBank, IPaymentRepository paymentRepository)
+        public PaymentService(IAcquiringBank acquiringBank, IPaymentDetailsRepository paymentDetailsRepository)
         {
             _acquiringBank = acquiringBank;
-            _paymentRepository = paymentRepository;
+            _paymentDetailsRepository = paymentDetailsRepository;
         }
 
 
@@ -26,7 +26,7 @@ namespace Checkout.Payment.Gateway.Api.Services
         {
             var acquiringBankResponse = await _acquiringBank.ProcessPaymentAsync(paymentDetails);
 
-            await _paymentRepository.AddPaymentDetailsAsync(acquiringBankResponse.PaymentId, paymentDetails);
+            await _paymentDetailsRepository.AddPaymentDetailsAsync(acquiringBankResponse.PaymentId, paymentDetails);
 
             return new PaymentDetailsProcessResult(acquiringBankResponse, paymentDetails);
         }
@@ -35,7 +35,7 @@ namespace Checkout.Payment.Gateway.Api.Services
         {
             var acquiringBankResponseTask = _acquiringBank.GetPaymentStatusAsync(paymentId);
 
-            var paymentDetailsTask = _paymentRepository.GetPaymentDetailsAsync(paymentId);
+            var paymentDetailsTask = _paymentDetailsRepository.GetPaymentDetailsAsync(paymentId);
 
             await Task.WhenAll(acquiringBankResponseTask, paymentDetailsTask);
 
