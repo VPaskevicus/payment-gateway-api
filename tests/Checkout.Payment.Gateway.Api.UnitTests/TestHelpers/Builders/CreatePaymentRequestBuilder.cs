@@ -1,5 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
-using CardDetails = Checkout.Payment.Gateway.Api.Contracts.CardDetails;
+using CardDetails = Checkout.Payment.Gateway.Api.Contracts.Requests.CardDetails;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Builders
 {

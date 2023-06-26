@@ -21,7 +21,7 @@ namespace Checkout.Payment.Gateway.Api.Mappers
             };
         }
 
-        private static Models.CardDetails MapCardDetails(Contracts.CardDetails cardDetails)
+        private static Models.CardDetails MapCardDetails(CardDetails cardDetails)
         {
             return new Models.CardDetails
             {
