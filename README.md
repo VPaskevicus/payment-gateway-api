@@ -154,3 +154,12 @@ builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
 ```
 
 Execute the POST request using Postman, refer to the request specification above.
+
+# Run Payment Gateway API locally using Docker
+ - Install docker [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/)
+ - Open Windows PowerShell
+ - Check the version of a docker installed by running <code>docker --version</code>
+ - Navigate to payment gateway api code repositorey <code>[path to repository]/payment-gateway-api</code>
+ - Build the docker image <code>docker build -t payment-gateway-api:v1 .</code>
+ - Run docker image mapping application port 5000 <code>docker run -d -e ASPNETCORE_ENVIRONMENT=Development -p 5000:80 payment-gateway-api:v1</code>
+ - The application can be accessed on <code>http://localhost:5000/swagger/index.html</code>
