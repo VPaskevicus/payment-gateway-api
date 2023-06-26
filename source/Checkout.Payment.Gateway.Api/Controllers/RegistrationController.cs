@@ -22,7 +22,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
         [HttpPost]
         [Route("/register")]
-        public async Task<ActionResult> Register(RegistrationRequest registrationRequest)
+        public async Task<ActionResult> Registration(RegistrationRequest registrationRequest)
         {
             try
             {
