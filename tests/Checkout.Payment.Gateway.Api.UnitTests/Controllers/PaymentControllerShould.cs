@@ -6,6 +6,7 @@ using Checkout.Payment.Gateway.Api.Models;
 using Checkout.Payment.Gateway.Api.Services;
 using Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
@@ -26,6 +27,8 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         private readonly Mock<IPaymentService> _paymentServiceMock;
         private readonly Mock<IResponseBuilder> _responseBuilderMock;
 
+        private readonly Mock<ILogger<PaymentController>> _paymentControllerLoggerMock;
+
         public PaymentControllerShould(
             CreatePaymentRequestFixture createPaymentRequestFixture,
             CreatePaymentResponseFixture createPaymentResponseFixture,
@@ -36,10 +39,13 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
             _paymentServiceMock = new Mock<IPaymentService>();
             _responseBuilderMock = new Mock<IResponseBuilder>();
 
+            _paymentControllerLoggerMock = new Mock<ILogger<PaymentController>>();
+
             _paymentController = new PaymentController(
                 _requestMapperMock.Object, 
                 _paymentServiceMock.Object,
-                _responseBuilderMock.Object);
+                _responseBuilderMock.Object,
+                _paymentControllerLoggerMock.Object);
 
             _createPaymentRequestFixture = createPaymentRequestFixture;
             _createPaymentResponseFixture = createPaymentResponseFixture;
@@ -144,6 +150,61 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
                 await _paymentController.GetPaymentDetails(new GetPaymentDetailsRequest());
 
             ((StatusCodeResult)createPaymentResponse).StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task LogExceptionWhenOccurredOnCreatePaymentCall()
+        {
+            _requestMapperMock.Setup(m => m.MapToDomainModel(It.IsAny<CreatePaymentRequest>()))
+                .Throws(new Exception(ErrorMessage));
+
+            await _paymentController.CreatePayment(_createPaymentRequestFixture.BasicCreatePaymentRequest);
+
+            _paymentControllerLoggerMock.Verify(logger => logger.Log(
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
+                    It.Is<EventId>(eventId => eventId.Id == 0),
+                    It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Exception occurred while processing payment request with id." && @type.Name == "FormattedLogValues"),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task LogExceptionWhenOccurredOnGetPaymentDetailsCall()
+        {
+            var getPaymentDetailsRequest = new GetPaymentDetailsRequest { PaymentId = Guid.NewGuid() };
+
+            _paymentServiceMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid>()))
+                .Throws(new Exception(ErrorMessage));
+
+            await _paymentController.GetPaymentDetails(getPaymentDetailsRequest);
+
+            _paymentControllerLoggerMock.Verify(logger => logger.Log(
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
+                    It.Is<EventId>(eventId => eventId.Id == 0),
+                    It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == $"Exception occurred while getting payment details with id {getPaymentDetailsRequest.PaymentId}." && @type.Name == "FormattedLogValues"),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task LogInformationWhenPaymentServiceGetPaymentDetailsAsyncReturnsNull()
+        {
+            var getPaymentDetailsRequest = new GetPaymentDetailsRequest { PaymentId = Guid.NewGuid() };
+
+            _paymentServiceMock.Setup(m => m.GetPaymentDetailsAsync(It.IsAny<Guid?>()))
+                .ReturnsAsync(_paymentProcessResultFixture.EmptyPaymentDetailsProcessResult);
+
+            await _paymentController.GetPaymentDetails(getPaymentDetailsRequest);
+
+            _paymentControllerLoggerMock.Verify(logger => logger.Log(
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Information),
+                    It.Is<EventId>(eventId => eventId.Id == 0),
+                    It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == $"Payment with {getPaymentDetailsRequest.PaymentId} was not found when accessing payments." && @type.Name == "FormattedLogValues"),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+                Times.Once);
         }
     }
 }

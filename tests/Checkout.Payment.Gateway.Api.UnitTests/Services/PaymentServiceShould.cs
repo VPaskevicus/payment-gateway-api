@@ -79,7 +79,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
             await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
 
             _paymentRepositoryMock.Verify(m =>
-                m.AddPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId, basicPaymentDetails));
+                m.AddPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId, basicPaymentDetails), Times.Once);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
 
             await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
 
-            _paymentRepositoryMock.Verify(m => m.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId));
+            _paymentRepositoryMock.Verify(m => m.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId), Times.Once);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
 
             await _paymentService.ProcessPaymentDetailsAsync(basicPaymentDetails);
 
-            _acquiringBankMock.Verify(m => m.ProcessPaymentAsync(basicPaymentDetails));
+            _acquiringBankMock.Verify(m => m.ProcessPaymentAsync(basicPaymentDetails), Times.Once);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Services
 
             await _paymentService.GetPaymentDetailsAsync(basicAcquiringBankResponse.PaymentId);
 
-            _acquiringBankMock.Verify(m => m.GetPaymentStatusAsync(basicAcquiringBankResponse.PaymentId));
+            _acquiringBankMock.Verify(m => m.GetPaymentStatusAsync(basicAcquiringBankResponse.PaymentId), Times.Once);
         }
 
         [Fact]

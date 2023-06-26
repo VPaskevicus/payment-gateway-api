@@ -13,14 +13,20 @@ namespace Checkout.Payment.Gateway.Api.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IResponseBuilder _responseBuilder;
 
+        private readonly ILogger<PaymentController> _paymentControllerLogger;
+
         public PaymentController(
             IRequestMapper requestMapper,
             IPaymentService paymentService,
-            IResponseBuilder responseBuilder)
+            IResponseBuilder responseBuilder,
+            
+            ILogger<PaymentController> paymentControllerLogger)
         {
             _requestMapper = requestMapper;
             _paymentService = paymentService;
             _responseBuilder = responseBuilder;
+
+            _paymentControllerLogger = paymentControllerLogger;
         }
 
         [HttpPost]
@@ -37,8 +43,10 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 return Ok(createPaymentResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _paymentControllerLogger.LogError(
+                    message: "Exception occurred while processing payment request with id.", exception: ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -54,6 +62,8 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 if (paymentDetailsProcessResult.NotFound())
                 {
+                    _paymentControllerLogger.LogInformation(
+                        $"Payment with {getPaymentDetailsRequest.PaymentId} was not found when accessing payments.");
                     return NotFound();
                 }
 
@@ -62,8 +72,12 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 return Ok(getPaymentDetailsResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _paymentControllerLogger.LogError(
+                    message:
+                    $"Exception occurred while getting payment details with id {getPaymentDetailsRequest.PaymentId}.",
+                    exception: ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
