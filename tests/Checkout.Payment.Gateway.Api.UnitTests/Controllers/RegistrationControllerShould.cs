@@ -18,7 +18,6 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
 
         private readonly RegistrationController _registrationController;
 
-
         public RegistrationControllerShould()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
