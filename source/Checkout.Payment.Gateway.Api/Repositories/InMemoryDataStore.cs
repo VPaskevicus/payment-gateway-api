@@ -21,5 +21,12 @@ namespace Checkout.Payment.Gateway.Api.Repositories
             return Task.FromResult(result);
 
         }
+
+        public Task<PaymentDetails?> GetPaymentDetailsAsync(Guid paymentId)
+        {
+            var found = _inMemoryDataStore.TryGetValue(paymentId, out var result);
+
+            return found ? Task.FromResult(result) : Task.FromResult<PaymentDetails?>(null);
+        }
     }
 }
