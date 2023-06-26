@@ -14,7 +14,7 @@ namespace Checkout.Payment.Gateway.Api.Fakes
             });
         }
 
-        public Task<AcquiringBankResponse> GetPaymentStatus(Guid paymentId)
+        public Task<AcquiringBankResponse> GetPaymentStatusAsync(Guid paymentId)
         {
             return Task.FromResult(new AcquiringBankResponse
             {
