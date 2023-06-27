@@ -4,7 +4,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
     public  class CreatePaymentResponseFixture
     {
-        public CreatePaymentResponse BasicCreatePaymentResponse => new CreatePaymentResponse()
+        public CreatePaymentResponse BasicCreatePaymentResponse => new()
         {
             Payment = new Api.Contracts.Responses.Payment()
             {

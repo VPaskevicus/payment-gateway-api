@@ -1,6 +1,7 @@
 using System.Text;
 using Checkout.Payment.Gateway.Api.Builders;
 using Checkout.Payment.Gateway.Api.Fakes;
+using Checkout.Payment.Gateway.Api.Generators;
 using Checkout.Payment.Gateway.Api.Interfaces;
 using Checkout.Payment.Gateway.Api.Mappers;
 using Checkout.Payment.Gateway.Api.Repositories;
@@ -23,6 +24,8 @@ builder.Services.AddSingleton<IResponseBuilder, ResponseBuilder>();
 builder.Services.AddSingleton<IPaymentDetailsRepository, InMemoryPaymentDetailsDataStore>();
 builder.Services.AddSingleton<IUserRepository, InMemoryUserDataStore>();
 builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
+
+builder.Services.AddSingleton<IAuthenticationTokenGenerator, AuthenticationTokenGenerator>();
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
 {

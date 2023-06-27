@@ -45,7 +45,6 @@ namespace Checkout.Payment.Gateway.Api.Builders
                     ExpirationYear = paymentDetailsProcessResult.PaymentDetails?.CardDetails?.ExpirationYear,
                     SecurityCode = paymentDetailsProcessResult.PaymentDetails?.CardDetails?.SecurityCode
                 }
-
             };
         }
     }

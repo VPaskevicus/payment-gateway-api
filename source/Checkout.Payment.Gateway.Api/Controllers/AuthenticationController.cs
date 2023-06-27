@@ -1,4 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
+using Checkout.Payment.Gateway.Api.Contracts.Responses;
 using Checkout.Payment.Gateway.Api.Generators;
 using Checkout.Payment.Gateway.Api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
 
                 var userToken = _authenticationTokenGenerator.GenerateToken(user);
 
-                return Ok(userToken);
+                return Ok(new AuthenticationResponse { Token = userToken });
             }
             catch (Exception ex)
             {
