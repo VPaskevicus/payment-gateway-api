@@ -201,7 +201,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
             _paymentControllerLoggerMock.Verify(logger => logger.Log(
                     It.Is<LogLevel>(logLevel => logLevel == LogLevel.Information),
                     It.Is<EventId>(eventId => eventId.Id == 0),
-                    It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == $"Payment with {getPaymentDetailsRequest.PaymentId} was not found when accessing payments." && @type.Name == "FormattedLogValues"),
+                    It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == $"Payment with id {getPaymentDetailsRequest.PaymentId} was not found when accessing payments." && @type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
                 Times.Once);

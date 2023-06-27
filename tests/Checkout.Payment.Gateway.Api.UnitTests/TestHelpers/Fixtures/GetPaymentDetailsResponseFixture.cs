@@ -4,9 +4,9 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
 {
     public  class GetPaymentDetailsResponseFixture
     {
-        public GetPaymentDetailsResponse BasicGetPaymentDetailsResponse = new GetPaymentDetailsResponse()
+        public GetPaymentDetailsResponse BasicGetPaymentDetailsResponse = new()
         {
-            Payment = new Api.Contracts.Responses.Payment()
+            Payment = new Api.Contracts.Responses.Payment
             {
                 Id = new Guid("93f5915a-d0bf-4cde-bf53-d0df49ce4437"),
                 StatusCode = "001"

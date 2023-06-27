@@ -37,11 +37,8 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
             var registrationResponse = await _registrationController.Registration(DefaultRegistrationRequest);
 
             var response = (CreatedResult)registrationResponse;
-
             response.StatusCode.Should().Be(201);
-
             var responseValue = response.Value as RegistrationResponse;
-
             responseValue?.Username.Should().Be(DefaultRegistrationRequest.Username);
             responseValue?.StatusCode.Should().Be("c_001");
         }

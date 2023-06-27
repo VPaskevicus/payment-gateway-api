@@ -1,4 +1,5 @@
 ﻿using Checkout.Payment.Gateway.Api.Contracts.Requests;
+using Checkout.Payment.Gateway.Api.Contracts.Responses;
 using Checkout.Payment.Gateway.Api.Controllers;
 using Checkout.Payment.Gateway.Api.Generators;
 using Checkout.Payment.Gateway.Api.Interfaces;
@@ -39,28 +40,24 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.Controllers
         {
             _userRepositoryMock.Setup(m => m.GetUserAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(DefaultUser);
             _authenticationTokenGeneratorMock.Setup(m => m.GenerateToken(DefaultUser)).Returns("defaultToken");
+
             var authenticationResponse = await _authenticationController.Authenticate(DefaultAuthenticationRequest);
 
             var response = (OkObjectResult)authenticationResponse;
-
             response.StatusCode.Should().Be(200);
-
-            var responseValue = response.Value as string;
-
-            responseValue?.Should().Be("defaultToken");
+            var responseValue = response.Value as AuthenticationResponse;
+            responseValue?.Token.Should().Be("defaultToken");
         }
 
         [Fact]
         public async Task Return401UnauthorizedWhenUserRecordNotFoundInUserDataStore()
         {
             User? user = null;
-            
             _userRepositoryMock.Setup(m => m.GetUserAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(user);
             
             var authenticationResponse = await _authenticationController.Authenticate(DefaultAuthenticationRequest);
 
             var response = (UnauthorizedResult)authenticationResponse;
-
             ((UnauthorizedResult)authenticationResponse).StatusCode.Should().Be(401);
         }
 

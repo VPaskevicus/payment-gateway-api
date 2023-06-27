@@ -3,13 +3,16 @@
 ## Purpose
 The Payment Gateway API allows a merchant to offer a way for their shoppers to pay for their product. The API also allows retrieving details of previously made payments.
 
-The documentation is available on [Wiki](https://github.com/VPaskevicus/payment-gateway-api/wiki) pages.
+**The documentation is available on [Wiki](https://github.com/VPaskevicus/payment-gateway-api/wiki) pages.**
 
 ## Available Endpoints
 - POST /register - register a user with a username and password
 - POST /authenticate - get Bearer token based on username and password
 - POST /payment - create a payment request
 - GET /payment/{PaymentId} - get payment status and transaction details
+
+In order to process the payment request, the merchant (User) should first register using https://localhost:7272/register endpoint.
+After user details are stored in the user data store, the user should be able to get a Bearer authentication token using https://localhost:7272/authenticate endpoint.
 
 To execute the request, refer to [API contracts](https://github.com/VPaskevicus/payment-gateway-api/wiki/API-Contracts) documentation.
 
@@ -45,10 +48,6 @@ builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
  - Download the [Visual Studio](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&workload=dotnet-dotnetwebcloud&passive=false#dotnet) 
  - Build and run the project using Visual Studio
  - The API should be accessible on https://localhost:7272 or http://localhost:5012
-
-In order to process the payment request, the merchant (User) should first register using https://localhost:7272/register endpoint.
-After user details are stored in the user data store, the user should be able to get a Bearer authentication token using https://localhost:7272/authenticate endpoint.
-
 
 ### Run using Docker
  - Install docker [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/)

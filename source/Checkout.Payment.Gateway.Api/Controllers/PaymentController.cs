@@ -65,7 +65,7 @@ namespace Checkout.Payment.Gateway.Api.Controllers
                 if (paymentDetailsProcessResult.NotFound())
                 {
                     _paymentControllerLogger.LogInformation(
-                        $"Payment with {getPaymentDetailsRequest.PaymentId} was not found when accessing payments.");
+                        $"Payment with id {getPaymentDetailsRequest.PaymentId} was not found when accessing payments.");
                     return NotFound();
                 }
 

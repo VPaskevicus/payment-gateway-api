@@ -10,7 +10,7 @@ namespace Checkout.Payment.Gateway.Api.UnitTests.TestHelpers.Fixtures
             MerchantId = new Guid("b92a095e-a730-49c5-a2a9-1f1e5377355f"),
             Currency = "gbp",
             Amount = 156.60m,
-            CardDetails = new CardDetails()
+            CardDetails = new CardDetails
             {
                 NameOnCard = "Vladimirs Paskevicus",
                 CardNumber = "1243123412341234",
