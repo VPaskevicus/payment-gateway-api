@@ -12,9 +12,12 @@ The Payment Gateway API allows a merchant to offer a way for their shoppers to p
 - GET /payment/{PaymentId} - get payment status and transaction details
 
 In order to process the payment request, the merchant (User) should first register using https://localhost:7272/register endpoint.
+
 After user details are stored in the user data store, the user should be able to get a Bearer authentication token using https://localhost:7272/authenticate endpoint.
 
-To execute the request, refer to [API contracts](https://github.com/VPaskevicus/payment-gateway-api/wiki/API-Contracts) documentation.
+Use the retrieved Bearer token to access payment endpoints.
+
+To call API endpoints, refer to the [API contracts](https://github.com/VPaskevicus/payment-gateway-api/wiki/API-Contracts) documentation.
 
 ## Code Architecture
 We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the following code-level hierarchy and flow.
