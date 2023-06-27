@@ -23,8 +23,8 @@ builder.Services.AddSingleton<IResponseBuilder, ResponseBuilder>();
 
 builder.Services.AddSingleton<IPaymentDetailsRepository, InMemoryPaymentDetailsDataStore>();
 builder.Services.AddSingleton<IUserRepository, InMemoryUserDataStore>();
-
 builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
+
 builder.Services.AddSingleton<IAuthenticationTokenGenerator, AuthenticationTokenGenerator>();
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>

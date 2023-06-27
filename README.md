@@ -1,161 +1,56 @@
 # Payment Gateway API
 
 ## Purpose
-The Payment Gateway API allows a merchant to offer a way for their shoppers to pay for their product. The API also allows retrieving details of previously made payments, which will help the merchant with their reconciliation and reporting needs.
+The Payment Gateway API allows a merchant to offer a way for their shoppers to pay for their product. The API also allows retrieving details of previously made payments.
+
+The documentation is available on [Wiki](https://github.com/VPaskevicus/payment-gateway-api/wiki) pages.
+
+## Available Endpoints
+- POST /register - register a user with a username and password
+- POST /authenticate - get Bearer token based on username and password
+- POST /payment - create a payment request
+- GET /payment/{PaymentId} - get payment status and transaction details
+
+To execute the request, refer to [API contracts](https://github.com/VPaskevicus/payment-gateway-api/wiki/API-Contracts) documentation.
 
 ## Code Architecture
 We have a .NET Core API project `Checkout.Payment.Gateway.Api` which follows the following code-level hierarchy and flow.
-- **RequestValidator**: Validates request parameters (mandatory fields)
-    - **Controller**: Performs request execution
-        - **PaymentService**: Performs payment logic for storing, quering and forwarging payment request to acquiring bank
-        - **RequestMapper**: Mapps contract request to domain model
-            - **AcquiringBank**: Performs the client call to acquiring bank and builds retrieved response to domain model 
-            - **PaymentRepository**: Performs data store operations for payment requests
-        - **ResponseBuilder**: Builds response for a consumer 
+- **AuthenticationMiddleware**: Approves or denies a request to access the payment controller
+    - **RequestValidator**: Validates request parameters (mandatory fields)
+        - **Controller**: Performs request execution
+            - **RequestMapper**: Mapps contract request to the domain model
+            - **PaymentService**: Performs payment logic for storing, querying, and forwarding payment requests to acquiring bank
+                - **AcquiringBank**: Performs the client call to acquiring bank and mapps retrieved response to the domain model 
+                - **PaymentDetailsRepository**: Performs data store operations for payment requests
+            - **UserRepository**: Performs data store operations for users
+            - **AuthenticationTokenGenerator**: Generates Bearer token based on given username and password
+            - **ResponseBuilder**: Builds response for a consumer
 
+## Request pipeline diagram                
 <img src="docs/diagrams/requests-pipeline.png">
 
-
-# Create Payment
-POST https://api.checkout.com/payment
-
-REQUEST BODY (required)
-```
-{
-    "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
-    "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
-    "currency": "gbp",
-    "amount": 156.60,
-    "cardDetails": {
-        "nameOnCard": "Vladimirs Paskevicus",
-        "cardNumber": "1243123412341234",
-        "expirationMonth": 3,
-        "expirationYear": 2027,
-        "securityCode": 555
-    }
-}
-```
-### Request properties and validation requirement
-CreatePaymentRequest
-|           Property |        Type |                   Validation Requirement |
-|-------------------:|------------:|------------------------------------------|
-|           shopperId|         Guid| Required
-|          merchantId|         Guid| Required
-|            currency|       string| Required, length of 3 characters
-|              amount|      decimal| Required
-|         cardDetails|       object| Required
-
-CardDetails
-|           Property |        Type |                   Validation Requirement |
-|-------------------:|------------:|------------------------------------------|
-|          nameOnCard|       string| Required, length between 5 and 70
-|          cardNumber|       string| Required, numeric with length of 16 
-|     expirationMonth|          int| Required, range between 1 and 12
-|      expirationYear|          int| Required, numeric with length of 4, starting from current year 
-|        securityCode|          int| Required, range between 100 and 999
-
-# Responses
-## 200 OK - RESPONSE BODY
-```
-{
-    "payment": {
-        "id": "6e8e4b2e-fb16-4d22-92dd-ca6d7c903e18",
-        "statusCode": "001"
-    }
-}
-```
-### Payment Transaction Response Codes
-|       ResponseCode |    Response Message | Response Type                            |
-|-------------------:|--------------------:|------------------------------------------|
-|                 001|             Complete| The payment transaction is complete
-|                 002|             Approved| The transaction to be processed
-|                 003|             Declined| The payment is decliened 
-
-## 400 Bad Request - RESPONSE BODY
-```
-{
-    "title": "One or more validation errors occurred.",
-    "status": 400,
-    "errors": [
-        "Shopper id is required",
-        "Merchant id is required",
-    	"Currency is required",
-        "Amount is required",
-    	"Name on card is required",
-  		"Card number is required",
-    	"Expiration month is required",
-  		"Expiration year is required",
-    	"Security code is required"
-    ]
-}
-```
-## 500 Internal Server Error - RESPONSE BODY
-```
-{
-    "type": "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-    "title": "An error occurred while processing your request.",
-    "status": 500,
-    "traceId": "00-da2ad4e61bf497a7e14707366f27a184-af0a772788002d0c-00"
-}
-```
-
-# Get Payment Details
-GET https://api.checkout.com/payment/4ac61dd6-4a9f-4f7d-8385-0263ad2d0123
-
-## 200 OK - RESPONSE BODY
-```
-{
-    "payment": {
-        "id": "b81e58f3-dad1-42ac-b17e-535aa3ae0317",
-        "statusCode": "001"
-    },
-    "shopperId": "8cb389ba-64dc-4f77-9250-b0ea046d9273",
-    "merchantId": "52d59ba9-0fb2-4ca5-82a1-efa3f17fe12c",
-    "currency": "gbp",
-    "amount": 156.60,
-    "cardDetails": {
-        "nameOnCard": "Vladimirs Paskevicus",
-        "cardNumber": "****************",
-        "expirationMonth": 3,
-        "expirationYear": 2027,
-        "securityCode": 555
-    }
-}
-```
-## 404 Not Found - RESPONSE BODY
-```
-{
-    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-    "title": "Not Found",
-    "status": 404,
-    "traceId": "00-7a94f00664a5fd2119611fb655c5549c-6b32cc1a6f86ce25-00"
-}
-```
-## 500 Internal Server Error - RESPONSE BODY
-```
-{
-    "type": "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-    "title": "An error occurred while processing your request.",
-    "status": 500,
-    "traceId": "00-da2ad4e61bf497a7e14707366f27a184-af0a772788002d0c-00"
-}
-```
-
-# Run Payment Gateway API locally
-In order to run and test the application and request pipeline, we can use an in-memory data store and fake acquiring bank that will simulate the process of a payment request. 
+## Run Payment Gateway API locally
+The application will run using an in-memory data store and a fake acquiring bank that will simulate the process of a payment request and response. 
 
 Using the IAcquiringBank interface, we can implement the integration part of the application that will contain the client-related code. The real implementation class can then be swapped with the current temporary fake when going to the production environment.
 
-For testing purposes, make sure that the application uses InMemoryDataStore and FakeAcquiringBank in <b>Program.cs</b>
+For testing purposes, make sure that the application uses InMemoryDataStore and FakeAcquiringBank in <b>Program.cs</b> class
 
 ```
-builder.Services.AddSingleton<IPaymentRepository, InMemoryDataStore>();
+builder.Services.AddSingleton<IPaymentDetailsRepository, InMemoryPaymentDetailsDataStore>();
+builder.Services.AddSingleton<IUserRepository, InMemoryUserDataStore>();
 builder.Services.AddSingleton<IAcquiringBank, FakeAcquiringBank>();
 ```
+### Run using Visual Studio
+ - Download the [Visual Studio](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&workload=dotnet-dotnetwebcloud&passive=false#dotnet) 
+ - Build and run the project using Visual Studio
+ - The API should be accessible on https://localhost:7272 or http://localhost:5012
 
-Execute the POST request using Postman, refer to the request specification above.
+In order to process the payment request, the merchant (User) should first register using https://localhost:7272/register endpoint.
+After user details are stored in the user data store, the user should be able to get a Bearer authentication token using https://localhost:7272/authenticate endpoint.
 
-# Run Payment Gateway API locally using Docker
+
+### Run using Docker
  - Install docker [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/)
  - Open Windows PowerShell
  - Check the version of a docker installed by running <code>docker --version</code>
